@@ -1,5 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Resend } from 'resend';
+import { onboardingAssignmentTemplate } from './templates/onboarding-assignment.template';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 
 @Injectable()
 export class MailService {
@@ -9,25 +11,30 @@ export class MailService {
     this.resend = new Resend(process.env.RESEND_API_KEY);
   }
 
-  async sendOnboardingAssignment(email: string, name: string, templateName: string) {
+  async sendOnboardingAssignment(
+    email: string,
+    name: string,
+    templateName: string,
+  ) {
+    const dashboardUrl =
+      process.env.FRONTEND_URL || 'https://onboardix.com/dashboard';
+
     const { data, error } = await this.resend.emails.send({
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+      from: process.env.EMAIL_FROM || 'Onboardix <onboarding@resend.dev>',
       to: [email],
       subject: '🚀 Seu onboarding começou!',
-      html: `
-        <h1>Olá, ${name}!</h1>
-        <p>Sua jornada na empresa acabou de ganhar um roteiro.</p>
-        <p>O RH atribuiu o template <strong>${templateName}</strong> para você.</p>
-        <p>Acesse a plataforma para conferir suas tarefas e começar agora mesmo.</p>
-        <br />
-        <a href="https://onboardix.com/dashboard" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-          Ver minhas tarefas
-        </a>
-      `,
+      html: onboardingAssignmentTemplate({
+        name,
+        templateName,
+        url: dashboardUrl,
+      }),
     });
 
     if (error) {
-      throw new InternalServerErrorException('Falha ao enviar e-mail');
+      console.error('[MailService]', error);
+      throw new InternalServerErrorException(
+        ErrorMessagesHelper.FAILED_TO_SEND_EMAIL,
+      );
     }
 
     return data;

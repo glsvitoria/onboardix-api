@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { compare } from 'bcryptjs';
 import { UsersRepository } from '@/users/repositories/users.repository';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 
 @Injectable()
 export class AuthService {
@@ -11,46 +12,31 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(dto: LoginDto) {
-    // 1. Busca o usuário (garanta que o repositório retorne a senha)
-    const user = await this.usersRepository.findByEmail(dto.email);
+  async login(loginDto: LoginDto) {
+    const userExists = await this.usersRepository.findByEmail(loginDto.email);
 
-    if (!user) {
-      throw new UnauthorizedException('Credenciais inválidas');
+    if (!userExists) {
+      throw new UnauthorizedException(ErrorMessagesHelper.INVALID_CREDENTIALS);
     }
 
-    // 2. Compara a senha digitada com o hash do banco
-    const isPasswordValid = await compare(dto.password, user.password_hash);
+    const isPasswordValid = await compare(
+      loginDto.password,
+      userExists.password_hash,
+    );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException(ErrorMessagesHelper.INVALID_CREDENTIALS);
     }
 
-    // 3. Retorna os dados para gerar o token (sem a senha!)
-    return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      organizationId: user.organizationId,
-    };
-  }
-
-  async login(user: any) {
     const payload = {
-      sub: user.id, // O ID do usuário vira o 'sub' (subject)
-      email: user.email,
-      role: user.role,
-      orgId: user.organizationId, // Essencial para o multi-tenancy
+      sub: userExists.id,
+      email: userExists.email,
+      role: userExists.role,
+      orgId: userExists.organizationId,
     };
 
     return {
       access_token: this.jwtService.sign(payload),
-      user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.fullName,
-        role: user.role,
-      },
     };
   }
 }

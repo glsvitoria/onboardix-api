@@ -9,6 +9,9 @@ import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 import { InvitationsRepository } from './repositories/invitations.repository';
 import { hash } from 'bcryptjs';
 import { randomBytes } from 'crypto';
+import { CreateInvitationDto } from './dto/create-invitation.dto';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 
 @Injectable()
 export class InvitationsService {
@@ -19,50 +22,69 @@ export class InvitationsService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async createInvitation(email: string, role: any, orgId: string) {
-    const userExists = await this.prisma.user.findUnique({ where: { email } });
+  async createInvitation(
+    createInvitationDto: CreateInvitationDto,
+    orgId: string,
+  ) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: createInvitationDto.email },
+    });
 
-    if (userExists) throw new ConflictException('Usuário já cadastrado');
+    if (userExists)
+      throw new ConflictException(
+        ErrorMessagesHelper.USER_WITH_SAME_EMAIL_CREATED,
+      );
 
     const token = randomBytes(32).toString('hex');
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
 
-    return this.invitationsRepository.create({
-      email,
-      role,
+    await this.invitationsRepository.create({
+      email: createInvitationDto.email,
+      role: createInvitationDto.role,
       token,
       expiresAt,
       organization: { connect: { id: orgId } },
     });
+
+    return {
+      message: SuccessMessagesHelper.INVITATION_CREATED,
+    };
   }
 
-  async acceptInvitation(dto: AcceptInvitationDto) {
-    const invitation = await this.invitationsRepository.findByToken(dto.token);
+  async acceptInvitation(acceptInvitationDto: AcceptInvitationDto) {
+    const invitation = await this.invitationsRepository.findByToken(
+      acceptInvitationDto.token,
+    );
 
-    if (!invitation) throw new BadRequestException('Convite inválido');
-    if (new Date() > invitation.expiresAt) throw new GoneException('Expirado');
+    if (!invitation)
+      throw new BadRequestException(ErrorMessagesHelper.INVALID_INVITATION);
 
-    const hashedPassword = await hash(dto.password, this.SALT_ROUNDS);
+    if (new Date() > invitation.expiresAt)
+      throw new GoneException(ErrorMessagesHelper.EXPIRED_INVITATION);
 
-    return await this.prisma.$transaction(async (tx) => {
-      const user = await this.invitationsRepository.createUser(
+    const hashedPassword = await hash(
+      acceptInvitationDto.password,
+      this.SALT_ROUNDS,
+    );
+
+    await this.prisma.$transaction(async (tx) => {
+      await this.invitationsRepository.delete(invitation.id, tx);
+
+      return await this.invitationsRepository.createUser(
         {
           email: invitation.email,
-          fullName: dto.fullName,
+          fullName: acceptInvitationDto.fullName,
           role: invitation.role,
           organization: { connect: { id: invitation.organizationId } },
           password_hash: hashedPassword,
         },
         tx,
       );
-
-      await this.invitationsRepository.delete(invitation.id, tx);
-
-      return {
-        message: 'Conta criada com sucesso!',
-        user: { id: user.id, organization: invitation.organization.name },
-      };
     });
+
+    return {
+      message: SuccessMessagesHelper.INVITATION_ACCEPTED,
+    };
   }
 }

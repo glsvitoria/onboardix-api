@@ -1,42 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Template, Task } from '@/generated/prisma/client';
+import { Prisma, Template } from '@/generated/prisma/client';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { TemplatesRepository } from './template.repository';
-
-// Tipo auxiliar para retornos que incluem as tarefas
-export type TemplateWithTasks = Template & { tasks: Task[] };
+import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 @Injectable()
 export class PrismaTemplatesRepository implements TemplatesRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async create(data: Prisma.TemplateCreateInput): Promise<TemplateWithTasks> {
+  async create(data: Prisma.TemplateCreateInput) {
     return await this.prismaService.template.create({
       data,
       include: { tasks: true },
     });
   }
 
-  async findAll(organizationId: string) {
+  async delete(id: string): Promise<Template> {
+    return await this.prismaService.template.delete({
+      where: { id },
+    });
+  }
+
+  async findAll(findAllPaginationDto: FindAllPaginationDto) {
     const [templates, total] = await Promise.all([
       this.prismaService.template.findMany({
+        ...findAllPaginationDto.pagination(),
         where: {
-          organizationId,
-          deletedAt: null, // Garante que não listamos templates deletados
+          ...findAllPaginationDto.where(),
         },
         include: {
           _count: {
-            select: { tasks: true },
+            select: {
+              tasks: true,
+            },
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          [findAllPaginationDto.sort]: 'desc',
         },
       }),
       this.prismaService.template.count({
         where: {
-          organizationId,
-          deletedAt: null,
+          ...findAllPaginationDto.where(),
+        },
+        orderBy: {
+          [findAllPaginationDto.sort]: 'desc',
         },
       }),
     ]);
@@ -47,15 +55,11 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
     };
   }
 
-  async findById(
-    id: string,
-    organizationId: string,
-  ): Promise<TemplateWithTasks | null> {
+  async findById(id: string, organizationId: string) {
     return await this.prismaService.template.findFirst({
       where: {
         id,
         organizationId,
-        deletedAt: null,
       },
       include: {
         tasks: {
@@ -69,7 +73,7 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
     id: string,
     organizationId: string,
     data: Prisma.TemplateUpdateInput,
-  ): Promise<TemplateWithTasks> {
+  ) {
     return await this.prismaService.template.update({
       where: {
         id,
@@ -77,14 +81,6 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
       },
       data,
       include: { tasks: true },
-    });
-  }
-
-  async delete(id: string): Promise<Template> {
-    // Implementação de Soft Delete para manter integridade de dados históricos
-    return await this.prismaService.template.update({
-      where: { id },
-      data: { deletedAt: new Date() },
     });
   }
 }

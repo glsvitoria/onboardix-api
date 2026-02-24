@@ -1,51 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EmployeesRepository } from './repositories/employees.repository';
 import { MailService } from '@/mail/mail.service';
+import { UsersRepository } from '@/users/repositories/users.repository';
+import { UserTasksRepository } from '@/user-task/repositories/user-tasks.repositories';
+import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 
 @Injectable()
 export class EmployeesService {
   constructor(
     private readonly employeesRepository: EmployeesRepository,
-    private readonly mailService: MailService, // Injetando o serviço de e-mail
+    private readonly usersRepository: UsersRepository,
+    private readonly userTasksRepository: UserTasksRepository,
+    private readonly mailService: MailService,
   ) {}
 
   async assignTemplate(userId: string, templateId: string, orgId: string) {
-    // 1. Busca o template e as tarefas vinculadas
     const template = await this.employeesRepository.findTemplateWithTasks(
       templateId,
       orgId,
     );
-    if (!template) throw new NotFoundException('Template não encontrado');
 
-    // 2. Busca os dados do usuário para o envio do e-mail
-    const user = await this.employeesRepository.findUserById(userId);
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!template)
+      throw new NotFoundException(ErrorMessagesHelper.TEMPLATE_NOT_FOUND);
 
-    // 3. Prepara as tarefas para inserção em massa (Batch)
+    const user = await this.usersRepository.findById(userId);
+
+    if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
+
     const userTasks = template.tasks.map((task) => ({
       userId,
       taskId: task.id,
     }));
 
-    // 4. Salva no banco de dados
-    const result = await this.employeesRepository.assignTasks(userTasks);
+    await this.employeesRepository.assignTasks(userTasks);
 
-    // 5. Dispara o e-mail via Resend (sem travar a resposta da API)
     this.mailService
       .sendOnboardingAssignment(user.email, user.fullName, template.title)
       .catch((err) => {
-        // Logamos o erro mas não quebramos a requisição, pois o dado já foi salvo
         console.error(
           `[MailError] Falha ao enviar e-mail para ${user.email}:`,
           err,
         );
       });
 
-    return result;
+    return {
+      message: SuccessMessagesHelper.TEMPLATE_ASSIGNED,
+    };
   }
 
   async getEmployeeProgress(userId: string) {
-    const tasks = await this.employeesRepository.findUserTasks(userId);
+    const tasks = await this.userTasksRepository.findByUserId(userId);
 
     const total = tasks.length;
     const completed = tasks.filter((t) => t.completedAt !== null).length;
@@ -60,24 +66,34 @@ export class EmployeesService {
   }
 
   async toggleTaskStatus(userId: string, taskId: string, completed: boolean) {
-    // 1. Validar se o vínculo existe
     const userTask = await this.employeesRepository.findUserTask(
       userId,
       taskId,
     );
 
     if (!userTask) {
-      throw new NotFoundException('Tarefa não atribuída a este usuário');
+      throw new NotFoundException(
+        ErrorMessagesHelper.TASK_NOT_ASSIGNED_TO_USER,
+      );
     }
 
-    // 2. Atualizar status
-    return this.employeesRepository.updateTaskStatus(userId, taskId, completed);
+    await this.employeesRepository.updateTaskStatus(userId, taskId, completed);
+
+    return {
+      message: SuccessMessagesHelper.TASK_STATUS_UPDATED,
+    };
   }
 
-  async listEmployees(orgId: string) {
-    const users = await this.employeesRepository.findAllByOrg(orgId);
+  async listEmployees(
+    orgId: string,
+    findAllPaginationDto: FindAllPaginationDto,
+  ) {
+    findAllPaginationDto.organizationId = orgId;
 
-    return users.map((user) => {
+    const { users, total } =
+      await this.employeesRepository.findAllWithUserTasks(findAllPaginationDto);
+
+    const usersFormatted = users.map((user) => {
       const totalTasks = user.assignedTasks.length;
       const completedTasks = user.assignedTasks.filter(
         (t) => t.completedAt,
@@ -103,6 +119,11 @@ export class EmployeesService {
         },
       };
     });
+
+    return {
+      users: usersFormatted,
+      total,
+    };
   }
 
   async getEmployeeDetail(userId: string, orgId: string) {
@@ -112,7 +133,7 @@ export class EmployeesService {
     );
 
     if (!employee) {
-      throw new NotFoundException('Colaborador não encontrado');
+      throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
     }
 
     const tasks = employee.assignedTasks.map((ut) => ({
@@ -138,7 +159,7 @@ export class EmployeesService {
         completed: completedCount,
         pending: totalCount - completedCount,
       },
-      tasks, // Lista completa para o RH auditar
+      tasks,
     };
   }
 }

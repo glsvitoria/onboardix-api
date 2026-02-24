@@ -2,30 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { Prisma, User } from '@/generated/prisma/client';
 import { EmployeesRepository } from './employees.repository';
+import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 @Injectable()
 export class PrismaEmployeesRepository implements EmployeesRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUserById(userId: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-  }
-  
-  // Ajustando o findTemplateWithTasks para garantir que as tasks venham com ID
   async findTemplateWithTasks(templateId: string, orgId: string) {
     return await this.prisma.template.findFirst({
-      where: { 
-        id: templateId, 
+      where: {
+        id: templateId,
         organizationId: orgId,
-        deletedAt: null 
       },
       include: {
         tasks: {
-          select: { id: true }
-        }
-      }
+          select: { id: true },
+        },
+      },
     });
   }
 
@@ -33,24 +26,6 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
     return await this.prisma.userTask.createMany({
       data,
       skipDuplicates: true,
-    });
-  }
-
-  async findUserTasks(userId: string) {
-    return await this.prisma.userTask.findMany({
-      where: { userId },
-      include: {
-        task: {
-          select: {
-            title: true,
-            content: true,
-            order: true,
-          },
-        },
-      },
-      orderBy: {
-        task: { order: 'asc' },
-      },
     });
   }
 
@@ -75,26 +50,41 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
     });
   }
 
-  async findAllByOrg(orgId: string) {
-    return await this.prisma.user.findMany({
-      where: {
-        organizationId: orgId,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        assignedTasks: {
-          select: {
-            completedAt: true,
+  async findAllWithUserTasks(findAllPaginationDto: FindAllPaginationDto) {
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        ...findAllPaginationDto.pagination(),
+        where: {
+          ...findAllPaginationDto.where(),
+        },
+        include: {
+          assignedTasks: {
+            include: {
+              task: true,
+            },
+            orderBy: {
+              task: { order: 'asc' },
+            },
           },
         },
-      },
-      orderBy: { fullName: 'asc' },
-    });
+        orderBy: {
+          [findAllPaginationDto.sort]: 'desc',
+        },
+      }),
+      this.prisma.user.count({
+        where: {
+          ...findAllPaginationDto.where(),
+        },
+        orderBy: {
+          [findAllPaginationDto.sort]: 'desc',
+        },
+      }),
+    ]);
+
+    return {
+      users,
+      total,
+    };
   }
 
   async findEmployeeDetail(userId: string, orgId: string) {
@@ -107,13 +97,7 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
       include: {
         assignedTasks: {
           include: {
-            task: {
-              select: {
-                title: true,
-                content: true,
-                order: true,
-              },
-            },
+            task: true,
           },
           orderBy: {
             task: { order: 'asc' },

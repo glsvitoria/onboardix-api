@@ -18,12 +18,4 @@ export class PrismaOrganizationsRepository implements OrganizationsRepository {
   async findBySlug(slug: string) {
     return await this.prisma.organization.findUnique({ where: { slug } });
   }
-
-  async createOwner(
-    data: Prisma.UserCreateInput,
-    tx?: Prisma.TransactionClient,
-  ) {
-    const client = tx ?? this.prisma;
-    return await client.user.create({ data });
-  }
 }

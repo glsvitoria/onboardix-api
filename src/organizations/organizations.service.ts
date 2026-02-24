@@ -3,6 +3,10 @@ import { RegisterOrganizationDto } from './dto/register-organization.dto';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { OrganizationsRepository } from './repositories/organizations.repository';
 import { hash } from 'bcryptjs';
+import { UsersRepository } from '@/users/repositories/users.repository';
+import { UserRole } from '@/generated/prisma/enums';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 
 @Injectable()
 export class OrganizationsService {
@@ -10,26 +14,33 @@ export class OrganizationsService {
 
   constructor(
     private readonly organizationsRepository: OrganizationsRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly prisma: PrismaService,
   ) {}
 
   async register(dto: RegisterOrganizationDto) {
     const slug = this.generateSlug(dto.companyName);
 
-    // 1. Validações rápidas
-    const existingUser = await this.prisma.user.findUnique({
+    const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-    if (existingUser) throw new ConflictException('E-mail já cadastrado');
 
-    const existingSlug = await this.organizationsRepository.findBySlug(slug);
-    if (existingSlug) throw new ConflictException('Empresa já registrada');
+    if (userExists)
+      throw new ConflictException(
+        ErrorMessagesHelper.USER_WITH_SAME_EMAIL_CREATED,
+      );
 
-    // 2. Hash da senha antes da transação
+    const organizationSlugExists =
+      await this.organizationsRepository.findBySlug(slug);
+
+    if (organizationSlugExists)
+      throw new ConflictException(
+        ErrorMessagesHelper.ORGANIZATION_WITH_SAME_SLUG_CREATED,
+      );
+
     const hashedPassword = await hash(dto.password, this.SALT_ROUNDS);
 
-    // 3. Transação Atômica
-    return this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx) => {
       const organization = await this.organizationsRepository.create(
         {
           name: dto.companyName,
@@ -38,21 +49,21 @@ export class OrganizationsService {
         tx,
       );
 
-      const user = await this.organizationsRepository.createOwner(
+      await this.usersRepository.create(
         {
           email: dto.email,
           fullName: dto.ownerName,
-          password_hash: hashedPassword, // Senha criptografada
-          role: 'OWNER',
+          password_hash: hashedPassword,
+          role: UserRole.OWNER,
           organization: { connect: { id: organization.id } },
         },
         tx,
       );
-
-      const { password_hash, ...userWithoutPassword } = user;
-
-      return { organization, user: userWithoutPassword };
     });
+
+    return {
+      message: SuccessMessagesHelper.ORGANIZATION_CREATED,
+    };
   }
 
   private generateSlug(name: string): string {

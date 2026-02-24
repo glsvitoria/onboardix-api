@@ -7,25 +7,26 @@ import { UsersRepository } from './users.repository';
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prisma: PrismaService) {}
 
+  async create(
+    data: Prisma.UserCreateInput,
+    tx?: Prisma.TransactionClient,
+  ): Promise<User> {
+    const client = tx ?? this.prisma;
+
+    return await client.user.create({ data });
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string, orgId?: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
-      where: { id },
+      where: { id, organizationId: orgId },
       include: { organization: true },
     });
-  }
-
-  async create(
-    data: Prisma.UserCreateInput,
-    tx?: Prisma.TransactionClient,
-  ): Promise<User> {
-    const client = tx ?? this.prisma;
-    return await client.user.create({ data });
   }
 
   async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {

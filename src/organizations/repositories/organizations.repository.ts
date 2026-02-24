@@ -6,8 +6,4 @@ export abstract class OrganizationsRepository {
     tx?: Prisma.TransactionClient,
   ): Promise<Organization>;
   abstract findBySlug(slug: string): Promise<Organization | null>;
-  abstract createOwner(
-    data: Prisma.UserCreateInput,
-    tx?: Prisma.TransactionClient,
-  ): Promise<User>;
 }

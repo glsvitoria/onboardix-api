@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserTasksRepository } from './repositories/user-tasks.repositories';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 
 @Injectable()
 export class UserTasksService {
@@ -11,8 +12,9 @@ export class UserTasksService {
 
   async toggleTask(userId: string, taskId: string, completed: boolean) {
     const task = await this.userTasksRepository.findByIds(userId, taskId);
+
     if (!task)
-      throw new NotFoundException('Tarefa não encontrada para este usuário');
+      throw new NotFoundException(ErrorMessagesHelper.TASK_NOT_FOUND_TO_USER);
 
     return this.userTasksRepository.updateStatus(userId, taskId, completed);
   }

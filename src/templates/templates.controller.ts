@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { TemplatesService } from './templates.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
@@ -17,6 +18,8 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
+import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
+import { ValidationUUID } from '@/common/pipes/validation-uuid.pipe';
 
 @Controller('templates')
 @AccessTokenAuth()
@@ -25,6 +28,7 @@ export class TemplatesController {
 
   @Post()
   @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() dto: CreateTemplateDto,
     @CurrentUser() user: AuthenticatedUser,
@@ -34,15 +38,18 @@ export class TemplatesController {
 
   @Get()
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  async findAll(@CurrentUser() user: AuthenticatedUser) {
-    return this.templatesService.findAll(user.orgId);
+  async findAll(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() findAllPaginationDto: FindAllPaginationDto,
+  ) {
+    return this.templatesService.findAll(findAllPaginationDto, user.orgId);
   }
 
   @Get(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   async findOne(
-    @Param('id') id: string,
     @CurrentUser() user: AuthenticatedUser,
+    @Param('id', new ValidationUUID()) id: string,
   ) {
     return this.templatesService.findOne(id, user.orgId);
   }
@@ -50,19 +57,18 @@ export class TemplatesController {
   @Patch(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateTemplateDto,
+    @Body() updateTemplateDto: UpdateTemplateDto,
     @CurrentUser() user: AuthenticatedUser,
+    @Param('id', new ValidationUUID()) id: string,
   ) {
-    return this.templatesService.update(id, user.orgId, dto);
+    return this.templatesService.update(id, updateTemplateDto, user.orgId);
   }
 
   @Delete(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
-    @Param('id') id: string,
     @CurrentUser() user: AuthenticatedUser,
+    @Param('id', new ValidationUUID()) id: string,
   ) {
     return this.templatesService.remove(id, user.orgId);
   }

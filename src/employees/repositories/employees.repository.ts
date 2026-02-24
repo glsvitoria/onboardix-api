@@ -1,4 +1,19 @@
-import { Prisma, Template, User, UserTask } from '@/generated/prisma/client';
+import {
+  Prisma,
+  Task,
+  Template,
+  User,
+  UserTask,
+} from '@/generated/prisma/client';
+import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
+
+interface UserWithUserTasks extends User {
+  assignedTasks: UserTaskWithTask[];
+}
+
+interface UserTaskWithTask extends UserTask {
+  task: Task;
+}
 
 export abstract class EmployeesRepository {
   abstract findTemplateWithTasks(
@@ -8,7 +23,6 @@ export abstract class EmployeesRepository {
   abstract assignTasks(
     data: Prisma.UserTaskCreateManyInput[],
   ): Promise<Prisma.BatchPayload>;
-  abstract findUserTasks(userId: string): Promise<any[]>;
   abstract updateTaskStatus(
     userId: string,
     taskId: string,
@@ -18,10 +32,14 @@ export abstract class EmployeesRepository {
     userId: string,
     taskId: string,
   ): Promise<UserTask | null>;
-  abstract findAllByOrg(orgId: string): Promise<any[]>;
+  abstract findAllWithUserTasks(
+    findAllPaginationDto: FindAllPaginationDto,
+  ): Promise<{
+    users: UserWithUserTasks[];
+    total: number;
+  }>;
   abstract findEmployeeDetail(
     userId: string,
     orgId: string,
-  ): Promise<any | null>;
-  abstract findUserById(userId: string): Promise<User | null>;
+  ): Promise<UserWithUserTasks | null>;
 }

@@ -5,6 +5,8 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
+import { UserRole } from '@/generated/prisma/enums';
+import { CreateInvitationDto } from './dto/create-invitation.dto';
 
 @Controller('invitations')
 @AccessTokenAuth()
@@ -12,17 +14,16 @@ export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
 
   @Post()
-  @Roles('ADMIN', 'OWNER')
+  @Roles(UserRole.ADMIN, UserRole.OWNER)
   async invite(
-    @Body('email') email: string,
-    @Body('role') role: any,
+    @Body('role') createInvitationDto: CreateInvitationDto,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.invitationsService.createInvitation(email, role, user.orgId);
+    return this.invitationsService.createInvitation(createInvitationDto, user.orgId);
   }
 
   @Post('accept')
-  async accept(@Body() dto: AcceptInvitationDto) {
-    return this.invitationsService.acceptInvitation(dto);
+  async accept(@Body() acceptInvitationDto: AcceptInvitationDto) {
+    return this.invitationsService.acceptInvitation(acceptInvitationDto);
   }
 }
