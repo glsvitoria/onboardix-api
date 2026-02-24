@@ -4,7 +4,7 @@ import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
-import { AcceptInvitationDto } from './dto/caccept-invitation.dto';
+import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 
 @Controller('invitations')
 @AccessTokenAuth()

@@ -39,6 +39,7 @@ export type TaskMinAggregateOutputType = {
   title: string | null
   content: string | null
   order: number | null
+  link: string | null
   templateId: string | null
 }
 
@@ -47,6 +48,7 @@ export type TaskMaxAggregateOutputType = {
   title: string | null
   content: string | null
   order: number | null
+  link: string | null
   templateId: string | null
 }
 
@@ -55,6 +57,7 @@ export type TaskCountAggregateOutputType = {
   title: number
   content: number
   order: number
+  link: number
   templateId: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type TaskMinAggregateInputType = {
   title?: true
   content?: true
   order?: true
+  link?: true
   templateId?: true
 }
 
@@ -81,6 +85,7 @@ export type TaskMaxAggregateInputType = {
   title?: true
   content?: true
   order?: true
+  link?: true
   templateId?: true
 }
 
@@ -89,6 +94,7 @@ export type TaskCountAggregateInputType = {
   title?: true
   content?: true
   order?: true
+  link?: true
   templateId?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type TaskGroupByOutputType = {
   title: string
   content: string | null
   order: number
+  link: string | null
   templateId: string
   _count: TaskCountAggregateOutputType | null
   _avg: TaskAvgAggregateOutputType | null
@@ -215,6 +222,7 @@ export type TaskWhereInput = {
   title?: Prisma.StringFilter<"Task"> | string
   content?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  link?: Prisma.StringNullableFilter<"Task"> | string | null
   templateId?: Prisma.UuidFilter<"Task"> | string
   template?: Prisma.XOR<Prisma.TemplateScalarRelationFilter, Prisma.TemplateWhereInput>
   userTasks?: Prisma.UserTaskListRelationFilter
@@ -225,6 +233,7 @@ export type TaskOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
+  link?: Prisma.SortOrderInput | Prisma.SortOrder
   templateId?: Prisma.SortOrder
   template?: Prisma.TemplateOrderByWithRelationInput
   userTasks?: Prisma.UserTaskOrderByRelationAggregateInput
@@ -238,6 +247,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Task"> | string
   content?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  link?: Prisma.StringNullableFilter<"Task"> | string | null
   templateId?: Prisma.UuidFilter<"Task"> | string
   template?: Prisma.XOR<Prisma.TemplateScalarRelationFilter, Prisma.TemplateWhereInput>
   userTasks?: Prisma.UserTaskListRelationFilter
@@ -248,6 +258,7 @@ export type TaskOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
+  link?: Prisma.SortOrderInput | Prisma.SortOrder
   templateId?: Prisma.SortOrder
   _count?: Prisma.TaskCountOrderByAggregateInput
   _avg?: Prisma.TaskAvgOrderByAggregateInput
@@ -264,6 +275,7 @@ export type TaskScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Task"> | string
   content?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   order?: Prisma.IntWithAggregatesFilter<"Task"> | number
+  link?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   templateId?: Prisma.UuidWithAggregatesFilter<"Task"> | string
 }
 
@@ -272,6 +284,7 @@ export type TaskCreateInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   template: Prisma.TemplateCreateNestedOneWithoutTasksInput
   userTasks?: Prisma.UserTaskCreateNestedManyWithoutTaskInput
 }
@@ -281,6 +294,7 @@ export type TaskUncheckedCreateInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   templateId: string
   userTasks?: Prisma.UserTaskUncheckedCreateNestedManyWithoutTaskInput
 }
@@ -290,6 +304,7 @@ export type TaskUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   template?: Prisma.TemplateUpdateOneRequiredWithoutTasksNestedInput
   userTasks?: Prisma.UserTaskUpdateManyWithoutTaskNestedInput
 }
@@ -299,6 +314,7 @@ export type TaskUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   userTasks?: Prisma.UserTaskUncheckedUpdateManyWithoutTaskNestedInput
 }
@@ -308,6 +324,7 @@ export type TaskCreateManyInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   templateId: string
 }
 
@@ -316,6 +333,7 @@ export type TaskUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TaskUncheckedUpdateManyInput = {
@@ -323,6 +341,7 @@ export type TaskUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -341,6 +360,7 @@ export type TaskCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  link?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
 }
 
@@ -353,6 +373,7 @@ export type TaskMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  link?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
 }
 
@@ -361,6 +382,7 @@ export type TaskMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  link?: Prisma.SortOrder
   templateId?: Prisma.SortOrder
 }
 
@@ -442,6 +464,7 @@ export type TaskCreateWithoutTemplateInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   userTasks?: Prisma.UserTaskCreateNestedManyWithoutTaskInput
 }
 
@@ -450,6 +473,7 @@ export type TaskUncheckedCreateWithoutTemplateInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   userTasks?: Prisma.UserTaskUncheckedCreateNestedManyWithoutTaskInput
 }
 
@@ -487,6 +511,7 @@ export type TaskScalarWhereInput = {
   title?: Prisma.StringFilter<"Task"> | string
   content?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  link?: Prisma.StringNullableFilter<"Task"> | string | null
   templateId?: Prisma.UuidFilter<"Task"> | string
 }
 
@@ -495,6 +520,7 @@ export type TaskCreateWithoutUserTasksInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   template: Prisma.TemplateCreateNestedOneWithoutTasksInput
 }
 
@@ -503,6 +529,7 @@ export type TaskUncheckedCreateWithoutUserTasksInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
   templateId: string
 }
 
@@ -527,6 +554,7 @@ export type TaskUpdateWithoutUserTasksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   template?: Prisma.TemplateUpdateOneRequiredWithoutTasksNestedInput
 }
 
@@ -535,6 +563,7 @@ export type TaskUncheckedUpdateWithoutUserTasksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -543,6 +572,7 @@ export type TaskCreateManyTemplateInput = {
   title: string
   content?: string | null
   order?: number
+  link?: string | null
 }
 
 export type TaskUpdateWithoutTemplateInput = {
@@ -550,6 +580,7 @@ export type TaskUpdateWithoutTemplateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userTasks?: Prisma.UserTaskUpdateManyWithoutTaskNestedInput
 }
 
@@ -558,6 +589,7 @@ export type TaskUncheckedUpdateWithoutTemplateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userTasks?: Prisma.UserTaskUncheckedUpdateManyWithoutTaskNestedInput
 }
 
@@ -566,6 +598,7 @@ export type TaskUncheckedUpdateManyWithoutTemplateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -604,6 +637,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   title?: boolean
   content?: boolean
   order?: boolean
+  link?: boolean
   templateId?: boolean
   template?: boolean | Prisma.TemplateDefaultArgs<ExtArgs>
   userTasks?: boolean | Prisma.Task$userTasksArgs<ExtArgs>
@@ -615,6 +649,7 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   title?: boolean
   content?: boolean
   order?: boolean
+  link?: boolean
   templateId?: boolean
   template?: boolean | Prisma.TemplateDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
@@ -624,6 +659,7 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   title?: boolean
   content?: boolean
   order?: boolean
+  link?: boolean
   templateId?: boolean
   template?: boolean | Prisma.TemplateDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["task"]>
@@ -633,10 +669,11 @@ export type TaskSelectScalar = {
   title?: boolean
   content?: boolean
   order?: boolean
+  link?: boolean
   templateId?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "order" | "templateId", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "order" | "link" | "templateId", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   template?: boolean | Prisma.TemplateDefaultArgs<ExtArgs>
   userTasks?: boolean | Prisma.Task$userTasksArgs<ExtArgs>
@@ -660,6 +697,7 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     title: string
     content: string | null
     order: number
+    link: string | null
     templateId: string
   }, ExtArgs["result"]["task"]>
   composites: {}
@@ -1090,6 +1128,7 @@ export interface TaskFieldRefs {
   readonly title: Prisma.FieldRef<"Task", 'String'>
   readonly content: Prisma.FieldRef<"Task", 'String'>
   readonly order: Prisma.FieldRef<"Task", 'Int'>
+  readonly link: Prisma.FieldRef<"Task", 'String'>
   readonly templateId: Prisma.FieldRef<"Task", 'String'>
 }
     

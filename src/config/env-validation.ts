@@ -32,6 +32,14 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   ACCESS_TOKEN_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  RESEND_API_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  EMAIL_FROM: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -10,9 +10,15 @@ import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('stats')
-  @Roles('ADMIN', 'OWNER') // Colaboradores comuns (MEMBER) não podem ver o progresso dos outros
-  async getStats(@CurrentUser() user: AuthenticatedUser) {
+  @Get('organization-report')
+  @Roles('ADMIN', 'OWNER')
+  async getReport(@CurrentUser() user: AuthenticatedUser) {
     return this.dashboardService.getOrganizationStats(user.orgId);
+  }
+
+  @Get('general-stats')
+  @Roles('ADMIN', 'OWNER')
+  async getGeneral(@CurrentUser() user: AuthenticatedUser) {
+    return this.dashboardService.getGeneralStats(user.orgId);
   }
 }

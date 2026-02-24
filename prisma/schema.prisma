@@ -40,6 +40,7 @@ enum UserRole {
 model User {
   id             String    @id @default(uuid()) @db.Uuid
   email          String    @unique
+  password_hash  String
   fullName       String    @map("full_name")
   role           UserRole  @default(MEMBER)
   
@@ -77,6 +78,7 @@ model Task {
   title       String
   content     String?
   order       Int      @default(0)
+  link        String?
   
   templateId  String   @db.Uuid @map("template_id")
   template    Template @relation(fields: [templateId], references: [id], onDelete: Cascade)

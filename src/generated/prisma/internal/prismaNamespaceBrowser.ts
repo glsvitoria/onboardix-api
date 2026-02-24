@@ -90,6 +90,7 @@ export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[k
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  password_hash: 'password_hash',
   fullName: 'fullName',
   role: 'role',
   organizationId: 'organizationId',
@@ -119,6 +120,7 @@ export const TaskScalarFieldEnum = {
   title: 'title',
   content: 'content',
   order: 'order',
+  link: 'link',
   templateId: 'templateId'
 } as const
 

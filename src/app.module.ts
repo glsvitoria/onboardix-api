@@ -5,6 +5,7 @@ import { TemplatesModule } from './templates/templates.module';
 import { EmployeesModule } from './employees/employees.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { InvitationsModule } from './invitations/invitations.module';
+import { UserTasksModule } from './user-task/users-tasks.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { InvitationsModule } from './invitations/invitations.module';
     EmployeesModule,
     DashboardModule,
     InvitationsModule,
+    UserTasksModule,
   ],
   controllers: [],
   providers: [],
