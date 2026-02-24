@@ -25,6 +25,7 @@ model Organization {
 
   users      User[]
   templates  Template[]
+  invitations Invitation[]
 
   @@map("organizations")
 }
@@ -61,7 +62,7 @@ model Template {
   
   tasks          Task[]
 
-  organizationId String    @db.Uuid @map("organization_id")
+  organizationId String     @db.Uuid @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   createdAt      DateTime  @default(now()) @map("created_at")
@@ -97,4 +98,20 @@ model UserTask {
 
   @@unique([userId, taskId])
   @@map("user_tasks")
+}
+
+
+model Invitation {
+  id             String    @id @default(uuid()) @db.Uuid
+  email          String
+  role           UserRole  @default(MEMBER)
+  token          String    @unique
+  expiresAt      DateTime  @map("expires_at")
+  
+  organizationId String       @db.Uuid @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("invitations")
 }

@@ -62,3 +62,8 @@ export type Task = Prisma.TaskModel
  * 
  */
 export type UserTask = Prisma.UserTaskModel
+/**
+ * Model Invitation
+ * 
+ */
+export type Invitation = Prisma.InvitationModel
