@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: postgres-onboardix
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=onboardix
+      - POSTGRES_PASSWORD=onboardix
+      - POSTGRES_DB=onboardixdb
+    volumes:
+      - postgres-data:/var/bin/postgresql/data
+
+volumes:
+  postgres-data:
