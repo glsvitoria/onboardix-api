@@ -56,7 +56,8 @@ export const ModelName = {
   Template: 'Template',
   Task: 'Task',
   UserTask: 'UserTask',
-  Invitation: 'Invitation'
+  Invitation: 'Invitation',
+  Lead: 'Lead'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -121,7 +122,10 @@ export const TaskScalarFieldEnum = {
   content: 'content',
   order: 'order',
   link: 'link',
-  templateId: 'templateId'
+  templateId: 'templateId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
@@ -131,7 +135,10 @@ export const UserTaskScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   taskId: 'taskId',
-  completedAt: 'completedAt'
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type UserTaskScalarFieldEnum = (typeof UserTaskScalarFieldEnum)[keyof typeof UserTaskScalarFieldEnum]
@@ -144,10 +151,22 @@ export const InvitationScalarFieldEnum = {
   token: 'token',
   expiresAt: 'expiresAt',
   organizationId: 'organizationId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const SortOrder = {

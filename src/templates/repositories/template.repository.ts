@@ -31,4 +31,9 @@ export abstract class TemplatesRepository {
     organizationId: string,
     data: Prisma.TemplateUpdateInput,
   ): Promise<TemplateWithTasks>;
+
+  abstract searchByName(
+    name: string,
+    orgId: string,
+  ): Promise<Pick<Template, 'id' | 'title'>[]>;
 }

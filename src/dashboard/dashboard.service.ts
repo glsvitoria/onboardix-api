@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DashboardRepository } from './repositories/dashboard.repository';
+import { UsersRepository } from '@/users/repositories/users.repository';
+import { TemplatesRepository } from '@/templates/repositories/template.repository';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly dashboardRepository: DashboardRepository) {}
+  constructor(
+    private readonly dashboardRepository: DashboardRepository,
+    private readonly templatesRepository: TemplatesRepository,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   async getOrganizationStats(orgId: string) {
     const employees =
@@ -27,14 +33,14 @@ export class DashboardService {
 
       const progressValue =
         totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-      totalProgressSum += progressValue; // Soma o valor numérico diretamente
+      totalProgressSum += progressValue;
 
       return {
         id: emp.id,
         name: emp.fullName,
         email: emp.email,
         progress: `${progressValue}%`,
-        progressValue, // Útil para ordenação no frontend
+        progressValue,
         status: progressValue === 100 ? 'COMPLETED' : 'IN_PROGRESS',
       };
     });
@@ -91,8 +97,30 @@ export class DashboardService {
           { name: 'Concluídas', value: stats.completedTasks },
           { name: 'Pendentes', value: stats.pendingTasks },
         ],
-        recentActivity, // Agora retorna: [{ date: '24/02', count: 5 }, ...]
+        recentActivity,
       },
+    };
+  }
+
+  async globalSearch(orgId: string, query: string) {
+    const [employees, templates] = await Promise.all([
+      this.usersRepository.searchByName(query, orgId),
+      this.templatesRepository.searchByName(query, orgId),
+    ]);
+
+    return {
+      results: [
+        ...employees.map((e) => ({
+          id: e.id,
+          name: e.fullName,
+          type: 'USER',
+        })),
+        ...templates.map((t) => ({
+          id: t.id,
+          name: t.title,
+          type: 'TEMPLATE',
+        })),
+      ],
     };
   }
 }

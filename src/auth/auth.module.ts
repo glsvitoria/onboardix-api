@@ -1,21 +1,25 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '@/users/users.module';
+import { PassportModule } from '@nestjs/passport';
+import { StrategiesHelper } from '@/common/helpers/strategies.helper';
+import { AccessTokenStrategy } from './strategies/access-token.strategy';
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
+    PassportModule.register({
+      defaultStrategy: StrategiesHelper.ACCESS_TOKEN_STRATEGY,
+    }),
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET || 'secret-key', // Use variáveis de ambiente!
-      signOptions: { expiresIn: '1d' }, // Token vale por 1 dia
+      secret: process.env.JWT_SECRET || 'secret-key',
+      signOptions: { expiresIn: '1d' },
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, AccessTokenStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

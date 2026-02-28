@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import { compare } from 'bcryptjs';
 import { UsersRepository } from '@/users/repositories/users.repository';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { env } from '@/config/env-validation';
 
 @Injectable()
 export class AuthService {
@@ -35,8 +36,22 @@ export class AuthService {
       orgId: userExists.organizationId,
     };
 
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: env.ACCESS_TOKEN_SECRET,
+    });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
     };
+  }
+
+  async profile(userId: string) {
+    const userExists = await this.usersRepository.findById(userId);
+
+    if (!userExists) {
+      throw new UnauthorizedException(ErrorMessagesHelper.USER_NOT_FOUND);
+    }
+
+    return userExists;
   }
 }

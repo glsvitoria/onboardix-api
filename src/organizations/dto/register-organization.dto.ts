@@ -36,7 +36,7 @@ export class RegisterOrganizationDto {
     message: 'A senha não pode ser vazia',
   })
   @MinLength(6, {
-    message: 'A senha deve ter no mínimo 6 dígitos.',
+    message: 'A senha deve ter no mínimo 6 dígitos',
   })
   password: string;
 
@@ -46,7 +46,7 @@ export class RegisterOrganizationDto {
   @IsNotEmpty({
     message: 'A confirmação de senha não pode ser vazia',
   })
-  @PasswordMatch({
+  @PasswordMatch('password', {
     message: 'A confirmação de senha deve ser igual a senha',
   })
   confirmPassword: string;

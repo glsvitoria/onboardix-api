@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   GoneException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 import { InvitationsRepository } from './repositories/invitations.repository';
@@ -12,6 +13,10 @@ import { randomBytes } from 'crypto';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
+import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
+import { UsersRepository } from '@/users/repositories/users.repository';
+import { MailService } from '@/mail/mail.service';
+import { OrganizationsRepository } from '@/organizations/repositories/organizations.repository';
 
 @Injectable()
 export class InvitationsService {
@@ -19,6 +24,9 @@ export class InvitationsService {
 
   constructor(
     private readonly invitationsRepository: InvitationsRepository,
+    private readonly organizationsRepository: OrganizationsRepository,
+    private readonly usersRepository: UsersRepository,
+    private readonly mailService: MailService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -26,9 +34,16 @@ export class InvitationsService {
     createInvitationDto: CreateInvitationDto,
     orgId: string,
   ) {
-    const userExists = await this.prisma.user.findUnique({
-      where: { email: createInvitationDto.email },
-    });
+    const organizationExists =
+      await this.organizationsRepository.findById(orgId);
+
+    if (!organizationExists) {
+      throw new NotFoundException(ErrorMessagesHelper.ORGANIZATION_NOT_FOUND);
+    }
+
+    const userExists = await this.usersRepository.findByEmail(
+      createInvitationDto.email,
+    );
 
     if (userExists)
       throw new ConflictException(
@@ -41,11 +56,15 @@ export class InvitationsService {
 
     await this.invitationsRepository.create({
       email: createInvitationDto.email,
-      role: createInvitationDto.role,
+      role: 'MEMBER',
       token,
       expiresAt,
       organization: { connect: { id: orgId } },
     });
+
+    this.mailService
+      .sendInvitationEmployee(createInvitationDto.email, 'Empresa Teste', token)
+      .catch((err) => console.error('Erro silencioso no envio de email:', err));
 
     return {
       message: SuccessMessagesHelper.INVITATION_CREATED,
@@ -71,7 +90,7 @@ export class InvitationsService {
     await this.prisma.$transaction(async (tx) => {
       await this.invitationsRepository.delete(invitation.id, tx);
 
-      return await this.invitationsRepository.createUser(
+      return await this.usersRepository.create(
         {
           email: invitation.email,
           fullName: acceptInvitationDto.fullName,
@@ -85,6 +104,18 @@ export class InvitationsService {
 
     return {
       message: SuccessMessagesHelper.INVITATION_ACCEPTED,
+    };
+  }
+
+  async list(orgId: string, findAllPaginationDto: FindAllPaginationDto) {
+    findAllPaginationDto.organizationId = orgId;
+
+    const { invitations, total } =
+      await this.invitationsRepository.findAll(findAllPaginationDto);
+
+    return {
+      invitations,
+      total,
     };
   }
 }

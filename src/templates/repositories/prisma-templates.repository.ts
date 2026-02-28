@@ -83,4 +83,15 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
       include: { tasks: true },
     });
   }
+
+  async searchByName(name: string, orgId: string) {
+    return await this.prismaService.template.findMany({
+      where: {
+        organizationId: orgId,
+        title: { contains: name, mode: 'insensitive' },
+      },
+      select: { id: true, title: true },
+      take: 5,
+    });
+  }
 }

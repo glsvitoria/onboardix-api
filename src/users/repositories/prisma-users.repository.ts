@@ -16,23 +16,34 @@ export class PrismaUsersRepository implements UsersRepository {
     return await client.user.create({ data });
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string) {
     return await this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  async findById(id: string, orgId?: string): Promise<User | null> {
+  async findById(id: string, orgId?: string) {
     return await this.prisma.user.findUnique({
       where: { id, organizationId: orgId },
       include: { organization: true },
     });
   }
 
-  async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
+  async update(id: string, data: Prisma.UserUpdateInput) {
     return await this.prisma.user.update({
       where: { id },
       data,
+    });
+  }
+
+  async searchByName(name: string, orgId: string) {
+    return await this.prisma.user.findMany({
+      where: {
+        organizationId: orgId,
+        fullName: { contains: name, mode: 'insensitive' },
+      },
+      select: { id: true, fullName: true },
+      take: 5,
     });
   }
 }

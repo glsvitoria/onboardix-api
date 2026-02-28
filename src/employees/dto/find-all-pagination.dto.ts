@@ -1,6 +1,6 @@
 import { PaginationQueryDto } from '@/common/dtos/pagination-query.dto';
 import { Prisma } from '@/generated/prisma/client';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 enum LogSortFieldEnum {
   CreatedAt = 'createdAt',
@@ -12,7 +12,7 @@ export class FindAllPaginationDto extends PaginationQueryDto<'createdAt'> {
   sort: LogSortFieldEnum = LogSortFieldEnum.CreatedAt;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   organizationId: string;
 
   where(): Prisma.UserWhereInput {

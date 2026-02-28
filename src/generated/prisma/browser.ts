@@ -47,3 +47,8 @@ export type UserTask = Prisma.UserTaskModel
  * 
  */
 export type Invitation = Prisma.InvitationModel
+/**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel

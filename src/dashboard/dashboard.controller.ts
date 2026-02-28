@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
 import { Roles } from '@/common/decorators/roles.decorator';
@@ -21,5 +21,18 @@ export class DashboardController {
   @Roles(UserRole.ADMIN, UserRole.OWNER)
   async getGeneral(@CurrentUser() user: AuthenticatedUser) {
     return this.dashboardService.getGeneralStats(user.orgId);
+  }
+
+  @Get('search')
+  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  async search(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query('q') query: string,
+  ) {
+    if (!query || query.length < 2) {
+      return { results: [] };
+    }
+
+    return this.dashboardService.globalSearch(user.orgId, query);
   }
 }

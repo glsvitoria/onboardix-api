@@ -56,6 +56,7 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
         ...findAllPaginationDto.pagination(),
         where: {
           ...findAllPaginationDto.where(),
+          role: 'MEMBER',
         },
         include: {
           assignedTasks: {
@@ -74,6 +75,7 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
       this.prisma.user.count({
         where: {
           ...findAllPaginationDto.where(),
+          role: 'MEMBER',
         },
         orderBy: {
           [findAllPaginationDto.sort]: 'desc',

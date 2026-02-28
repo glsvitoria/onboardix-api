@@ -7,14 +7,6 @@ import {
 } from '@/generated/prisma/client';
 import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
-interface UserWithUserTasks extends User {
-  assignedTasks: UserTaskWithTask[];
-}
-
-interface UserTaskWithTask extends UserTask {
-  task: Task;
-}
-
 export abstract class EmployeesRepository {
   abstract findTemplateWithTasks(
     templateId: string,
@@ -42,4 +34,17 @@ export abstract class EmployeesRepository {
     userId: string,
     orgId: string,
   ): Promise<UserWithUserTasks | null>;
+}
+
+export enum UserInvitationStatus {
+  PENDING,
+  ACCEPTED,
+}
+
+interface UserWithUserTasks extends User {
+  assignedTasks: UserTaskWithTask[];
+}
+
+interface UserTaskWithTask extends UserTask {
+  task: Task;
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { Prisma } from '@/generated/prisma/client';
 import { InvitationsRepository } from './invitations.repository';
+import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 @Injectable()
 export class PrismaInvitationsRepository implements InvitationsRepository {
@@ -27,11 +28,30 @@ export class PrismaInvitationsRepository implements InvitationsRepository {
     return await client.invitation.delete({ where: { id } });
   }
 
-  async createUser(
-    data: Prisma.UserCreateInput,
-    tx?: Prisma.TransactionClient,
-  ) {
-    const client = tx ?? this.prisma;
-    return await client.user.create({ data });
+  async findAll(findAllPaginationDto: FindAllPaginationDto) {
+    const [invitations, total] = await Promise.all([
+      this.prisma.invitation.findMany({
+        ...findAllPaginationDto.pagination(),
+        where: {
+          ...findAllPaginationDto.where(),
+        },
+        orderBy: {
+          [findAllPaginationDto.sort]: 'desc',
+        },
+      }),
+      this.prisma.invitation.count({
+        where: {
+          ...findAllPaginationDto.where(),
+        },
+        orderBy: {
+          [findAllPaginationDto.sort]: 'desc',
+        },
+      }),
+    ]);
+
+    return {
+      invitations,
+      total,
+    };
   }
 }

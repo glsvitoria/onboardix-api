@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
-import {
-  DashboardRepository,
-  UserWithTaskCount,
-} from './dashboard.repository';
+import { DashboardRepository, UserWithTaskCount } from './dashboard.repository';
 
 @Injectable()
 export class PrismaDashboardRepository implements DashboardRepository {
@@ -13,7 +10,7 @@ export class PrismaDashboardRepository implements DashboardRepository {
     orgId: string,
   ): Promise<UserWithTaskCount[]> {
     return this.prisma.user.findMany({
-      where: { organizationId: orgId, deletedAt: null },
+      where: { organizationId: orgId, role: 'MEMBER' },
       select: {
         id: true,
         fullName: true,
@@ -28,13 +25,16 @@ export class PrismaDashboardRepository implements DashboardRepository {
   async getOrgStats(orgId: string) {
     const [totalEmployees, completedTasks, totalTasks] = await Promise.all([
       this.prisma.user.count({
-        where: { organizationId: orgId, deletedAt: null },
+        where: { organizationId: orgId, role: 'MEMBER' },
       }),
       this.prisma.userTask.count({
-        where: { user: { organizationId: orgId }, completedAt: { not: null } },
+        where: {
+          user: { organizationId: orgId, role: 'MEMBER' },
+          completedAt: { not: null },
+        },
       }),
       this.prisma.userTask.count({
-        where: { user: { organizationId: orgId } },
+        where: { user: { organizationId: orgId, role: 'MEMBER' } },
       }),
     ]);
 
@@ -64,10 +64,9 @@ export class PrismaDashboardRepository implements DashboardRepository {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Agrupamento por dia diretamente no banco (mais performático)
     const result = await this.prisma.userTask.findMany({
       where: {
-        user: { organizationId: orgId },
+        user: { organizationId: orgId, role: 'MEMBER' },
         completedAt: { gte: sevenDaysAgo },
       },
       select: { completedAt: true },

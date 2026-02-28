@@ -18,7 +18,7 @@ class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  content: string;
+  content?: string;
 }
 
 export class CreateTemplateDto {
@@ -34,7 +34,7 @@ export class CreateTemplateDto {
     message: 'A descrição deve ser uma string',
   })
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -103,13 +103,13 @@ export class EmployeesService {
 
       return {
         id: user.id,
-        name: user.fullName,
+        fullName: user.fullName,
         email: user.email,
         role: user.role,
-        joinedAt: user.createdAt,
+        createdAt: user.createdAt,
         onboarding: {
           status:
-            totalTasks === 0
+            progress === 0
               ? 'NOT_STARTED'
               : progress === 100
                 ? 'COMPLETED'

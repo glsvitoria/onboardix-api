@@ -10,7 +10,7 @@ class UpdateTaskDto {
 
   @IsString()
   @IsOptional()
-  content: string;
+  content?: string;
 }
 
 export class UpdateTemplateDto {
@@ -18,13 +18,13 @@ export class UpdateTemplateDto {
     message: 'O título do template deve ser uma string',
   })
   @IsOptional()
-  title: string;
+  title?: string;
 
   @IsString({
     message: 'A descrição deve ser uma string',
   })
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -3,6 +3,7 @@ export const ErrorMessagesHelper = {
   FAILED_TO_SEND_EMAIL: 'Falha no envio do E-mail',
   ORGANIZATION_WITH_SAME_SLUG_CREATED:
     'Organização com esse slug já cadastrada',
+  ORGANIZATION_NOT_FOUND: 'Organização não encontrada',
   INVALID_CREDENTIALS: 'As credenciais informadas são inválidas',
   INVALID_INVITATION: 'Convite inválido',
   TASK_NOT_ASSIGNED_TO_USER: 'Tarefa não atribuída para esse colaborador',

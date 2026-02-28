@@ -1,6 +1,7 @@
 export const SuccessMessagesHelper = {
   INVITATION_ACCEPTED: 'Convite aceito com sucesso!',
   INVITATION_CREATED: 'Convite enviado com sucesso!',
+  LEAD_CONFIRMATION: 'Interesse de acesso ao sistema confirmado com sucesso',
   ORGANIZATION_CREATED: 'Organização criada com sucesso!',
   TASK_STATUS_UPDATED: 'Status da tarefa atualizada com sucesso',
   TEMPLATE_ASSIGNED: 'Template atribuído ao colaborador com sucesso!',

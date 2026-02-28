@@ -18,13 +18,13 @@ export class UserTasksController {
     return this.userTasksService.getMyTasks(user.sub);
   }
 
-  @Patch(':taskId/toggle')
+  @Patch(':userTaskId/toggle')
   @Roles(UserRole.MEMBER)
   async toggle(
     @Body('completed') completed: boolean,
     @CurrentUser() user: AuthenticatedUser,
-    @Param('taskId', new ValidationUUID()) taskId: string,
+    @Param('userTaskId', new ValidationUUID()) userTaskId: string,
   ) {
-    return this.userTasksService.toggleTask(user.sub, taskId, completed);
+    return this.userTasksService.toggleTask(user.sub, userTaskId, completed);
   }
 }

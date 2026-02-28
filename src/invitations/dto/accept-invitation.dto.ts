@@ -7,10 +7,10 @@ export class AcceptInvitationDto {
   token: string;
 
   @IsString({
-    message: "O nome deve ser uma string"
+    message: 'O nome deve ser uma string',
   })
   @IsNotEmpty({
-    message: "O nome não pode ser vazio"
+    message: 'O nome não pode ser vazio',
   })
   fullName: string;
 
@@ -31,7 +31,7 @@ export class AcceptInvitationDto {
   @IsNotEmpty({
     message: 'A confirmação de senha não pode ser vazia',
   })
-  @PasswordMatch({
+  @PasswordMatch('password', {
     message: 'A confirmação de senha deve ser igual a senha',
   })
   confirmPassword: string;

@@ -18,15 +18,15 @@ export class PrismaUserTasksRepository implements UserTasksRepository {
     });
   }
 
-  async findByIds(userId: string, taskId: string) {
-    return await this.prisma.userTask.findUnique({
-      where: { userId_taskId: { userId, taskId } },
+  async findById(userTaskId: string, userId: string) {
+    return await this.prisma.userTask.findFirst({
+      where: { id: userTaskId, userId },
     });
   }
 
-  async updateStatus(userId: string, taskId: string, completed: boolean) {
+  async updateStatus(userTaskId: string, userId: string, completed: boolean) {
     return await this.prisma.userTask.update({
-      where: { userId_taskId: { userId, taskId } },
+      where: { id: userTaskId, userId },
       data: { completedAt: completed ? new Date() : null },
     });
   }

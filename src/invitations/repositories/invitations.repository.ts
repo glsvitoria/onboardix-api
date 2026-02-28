@@ -1,4 +1,5 @@
 import { Invitation, Prisma, User } from '@/generated/prisma/client';
+import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 export abstract class InvitationsRepository {
   abstract create(data: Prisma.InvitationCreateInput): Promise<Invitation>;
@@ -10,8 +11,7 @@ export abstract class InvitationsRepository {
     id: string,
     tx?: Prisma.TransactionClient,
   ): Promise<Invitation>;
-  abstract createUser(
-    data: Prisma.UserCreateInput,
-    tx?: Prisma.TransactionClient,
-  ): Promise<User>;
+  abstract findAll(
+    findAllPaginationDto: FindAllPaginationDto,
+  ): Promise<{ invitations: Invitation[]; total: number }>;
 }

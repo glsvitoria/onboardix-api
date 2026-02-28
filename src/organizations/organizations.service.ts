@@ -7,6 +7,7 @@ import { UsersRepository } from '@/users/repositories/users.repository';
 import { UserRole } from '@/generated/prisma/enums';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
+import { MailService } from '@/mail/mail.service';
 
 @Injectable()
 export class OrganizationsService {
@@ -16,6 +17,7 @@ export class OrganizationsService {
     private readonly organizationsRepository: OrganizationsRepository,
     private readonly usersRepository: UsersRepository,
     private readonly prisma: PrismaService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(dto: RegisterOrganizationDto) {
@@ -60,6 +62,15 @@ export class OrganizationsService {
         tx,
       );
     });
+
+    this.mailService
+      .sendWelcomeOrganization(dto.email, dto.ownerName, dto.companyName)
+      .catch((err) =>
+        console.error(
+          '[MailService] Erro silencioso no envio de boas-vindas:',
+          err,
+        ),
+      );
 
     return {
       message: SuccessMessagesHelper.ORGANIZATION_CREATED,

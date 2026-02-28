@@ -32,6 +32,8 @@ export type InvitationMinAggregateOutputType = {
   expiresAt: Date | null
   organizationId: string | null
   createdAt: Date | null
+  updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type InvitationMaxAggregateOutputType = {
@@ -42,6 +44,8 @@ export type InvitationMaxAggregateOutputType = {
   expiresAt: Date | null
   organizationId: string | null
   createdAt: Date | null
+  updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type InvitationCountAggregateOutputType = {
@@ -52,6 +56,8 @@ export type InvitationCountAggregateOutputType = {
   expiresAt: number
   organizationId: number
   createdAt: number
+  updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -64,6 +70,8 @@ export type InvitationMinAggregateInputType = {
   expiresAt?: true
   organizationId?: true
   createdAt?: true
+  updatedAt?: true
+  deletedAt?: true
 }
 
 export type InvitationMaxAggregateInputType = {
@@ -74,6 +82,8 @@ export type InvitationMaxAggregateInputType = {
   expiresAt?: true
   organizationId?: true
   createdAt?: true
+  updatedAt?: true
+  deletedAt?: true
 }
 
 export type InvitationCountAggregateInputType = {
@@ -84,6 +94,8 @@ export type InvitationCountAggregateInputType = {
   expiresAt?: true
   organizationId?: true
   createdAt?: true
+  updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -167,6 +179,8 @@ export type InvitationGroupByOutputType = {
   expiresAt: Date
   organizationId: string
   createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
   _count: InvitationCountAggregateOutputType | null
   _min: InvitationMinAggregateOutputType | null
   _max: InvitationMaxAggregateOutputType | null
@@ -198,6 +212,8 @@ export type InvitationWhereInput = {
   expiresAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
   organizationId?: Prisma.UuidFilter<"Invitation"> | string
   createdAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Invitation"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
 }
 
@@ -209,6 +225,8 @@ export type InvitationOrderByWithRelationInput = {
   expiresAt?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
 }
 
@@ -223,6 +241,8 @@ export type InvitationWhereUniqueInput = Prisma.AtLeast<{
   expiresAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
   organizationId?: Prisma.UuidFilter<"Invitation"> | string
   createdAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Invitation"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
 }, "id" | "token">
 
@@ -234,6 +254,8 @@ export type InvitationOrderByWithAggregationInput = {
   expiresAt?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.InvitationCountOrderByAggregateInput
   _max?: Prisma.InvitationMaxOrderByAggregateInput
   _min?: Prisma.InvitationMinOrderByAggregateInput
@@ -250,6 +272,8 @@ export type InvitationScalarWhereWithAggregatesInput = {
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Invitation"> | Date | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"Invitation"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Invitation"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Invitation"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Invitation"> | Date | string | null
 }
 
 export type InvitationCreateInput = {
@@ -259,6 +283,8 @@ export type InvitationCreateInput = {
   token: string
   expiresAt: Date | string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutInvitationsInput
 }
 
@@ -270,6 +296,8 @@ export type InvitationUncheckedCreateInput = {
   expiresAt: Date | string
   organizationId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type InvitationUpdateInput = {
@@ -279,6 +307,8 @@ export type InvitationUpdateInput = {
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutInvitationsNestedInput
 }
 
@@ -290,6 +320,8 @@ export type InvitationUncheckedUpdateInput = {
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type InvitationCreateManyInput = {
@@ -300,6 +332,8 @@ export type InvitationCreateManyInput = {
   expiresAt: Date | string
   organizationId: string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type InvitationUpdateManyMutationInput = {
@@ -309,6 +343,8 @@ export type InvitationUpdateManyMutationInput = {
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type InvitationUncheckedUpdateManyInput = {
@@ -319,6 +355,8 @@ export type InvitationUncheckedUpdateManyInput = {
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type InvitationListRelationFilter = {
@@ -339,6 +377,8 @@ export type InvitationCountOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type InvitationMaxOrderByAggregateInput = {
@@ -349,6 +389,8 @@ export type InvitationMaxOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type InvitationMinOrderByAggregateInput = {
@@ -359,6 +401,8 @@ export type InvitationMinOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type InvitationCreateNestedManyWithoutOrganizationInput = {
@@ -410,6 +454,8 @@ export type InvitationCreateWithoutOrganizationInput = {
   token: string
   expiresAt: Date | string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type InvitationUncheckedCreateWithoutOrganizationInput = {
@@ -419,6 +465,8 @@ export type InvitationUncheckedCreateWithoutOrganizationInput = {
   token: string
   expiresAt: Date | string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type InvitationCreateOrConnectWithoutOrganizationInput = {
@@ -458,6 +506,8 @@ export type InvitationScalarWhereInput = {
   expiresAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
   organizationId?: Prisma.UuidFilter<"Invitation"> | string
   createdAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Invitation"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Invitation"> | Date | string | null
 }
 
 export type InvitationCreateManyOrganizationInput = {
@@ -467,6 +517,8 @@ export type InvitationCreateManyOrganizationInput = {
   token: string
   expiresAt: Date | string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type InvitationUpdateWithoutOrganizationInput = {
@@ -476,6 +528,8 @@ export type InvitationUpdateWithoutOrganizationInput = {
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type InvitationUncheckedUpdateWithoutOrganizationInput = {
@@ -485,6 +539,8 @@ export type InvitationUncheckedUpdateWithoutOrganizationInput = {
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type InvitationUncheckedUpdateManyWithoutOrganizationInput = {
@@ -494,6 +550,8 @@ export type InvitationUncheckedUpdateManyWithoutOrganizationInput = {
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -506,6 +564,8 @@ export type InvitationSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   expiresAt?: boolean
   organizationId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["invitation"]>
 
@@ -517,6 +577,8 @@ export type InvitationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   expiresAt?: boolean
   organizationId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["invitation"]>
 
@@ -528,6 +590,8 @@ export type InvitationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   expiresAt?: boolean
   organizationId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  deletedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["invitation"]>
 
@@ -539,9 +603,11 @@ export type InvitationSelectScalar = {
   expiresAt?: boolean
   organizationId?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type InvitationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "role" | "token" | "expiresAt" | "organizationId" | "createdAt", ExtArgs["result"]["invitation"]>
+export type InvitationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "role" | "token" | "expiresAt" | "organizationId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["invitation"]>
 export type InvitationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
@@ -565,6 +631,8 @@ export type $InvitationPayload<ExtArgs extends runtime.Types.Extensions.Internal
     expiresAt: Date
     organizationId: string
     createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["invitation"]>
   composites: {}
 }
@@ -996,6 +1064,8 @@ export interface InvitationFieldRefs {
   readonly expiresAt: Prisma.FieldRef<"Invitation", 'DateTime'>
   readonly organizationId: Prisma.FieldRef<"Invitation", 'String'>
   readonly createdAt: Prisma.FieldRef<"Invitation", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Invitation", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Invitation", 'DateTime'>
 }
     
 
