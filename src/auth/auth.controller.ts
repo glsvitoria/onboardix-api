@@ -25,6 +25,6 @@ export class AuthController {
   @Get('me')
   @AccessTokenAuth()
   async profile(@CurrentUser() user: AuthenticatedUser) {
-    return this.authService.profile(user.sub);
+    return this.authService.profile(user.sub, user.orgId);
   }
 }

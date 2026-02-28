@@ -5,8 +5,8 @@ export abstract class UsersRepository {
     data: Prisma.UserCreateInput,
     tx?: Prisma.TransactionClient,
   ): Promise<User>;
-  abstract findByEmail(email: string): Promise<User | null>;
-  abstract findById(id: string, orgId?: string): Promise<User | null>;
+  abstract findByEmail(email: string, orgId?: string): Promise<User | null>;
+  abstract findById(id: string, orgId: string): Promise<User | null>;
   abstract update(id: string, data: Prisma.UserUpdateInput): Promise<User>;
   abstract searchByName(
     name: string,

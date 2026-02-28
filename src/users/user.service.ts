@@ -8,15 +8,16 @@ import { compare, hash } from 'bcryptjs';
 import { UsersRepository } from './repositories/users.repository';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async updateProfile(userId: string, dto: UpdateProfileDto) {
-    const user = await this.usersRepository.findById(userId);
+  async updateProfile(userId: string, orgId: string, dto: UpdateProfileDto) {
+    const user = await this.usersRepository.findById(userId, orgId);
 
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
 
     return this.usersRepository.update(userId, {
       fullName: dto.fullName,
@@ -24,10 +25,10 @@ export class UsersService {
     });
   }
 
-  async updatePassword(userId: string, dto: UpdatePasswordDto) {
-    const user = await this.usersRepository.findById(userId);
+  async updatePassword(userId: string, orgId: string, dto: UpdatePasswordDto) {
+    const user = await this.usersRepository.findById(userId, orgId);
 
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
 
     const isPasswordValid = await compare(
       dto.currentPassword,

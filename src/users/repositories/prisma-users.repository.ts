@@ -16,16 +16,15 @@ export class PrismaUsersRepository implements UsersRepository {
     return await client.user.create({ data });
   }
 
-  async findByEmail(email: string) {
-    return await this.prisma.user.findUnique({
-      where: { email },
+  async findByEmail(email: string, orgId?: string) {
+    return await this.prisma.user.findFirst({
+      where: { email, organizationId: orgId },
     });
   }
 
-  async findById(id: string, orgId?: string) {
-    return await this.prisma.user.findUnique({
+  async findById(id: string, orgId: string) {
+    return await this.prisma.user.findFirst({
       where: { id, organizationId: orgId },
-      include: { organization: true },
     });
   }
 

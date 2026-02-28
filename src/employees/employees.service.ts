@@ -25,7 +25,7 @@ export class EmployeesService {
     if (!template)
       throw new NotFoundException(ErrorMessagesHelper.TEMPLATE_NOT_FOUND);
 
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findById(userId, orgId);
 
     if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
 

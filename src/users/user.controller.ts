@@ -16,7 +16,7 @@ export class UsersController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: UpdateProfileDto,
   ) {
-    return this.usersService.updateProfile(user.sub, dto);
+    return this.usersService.updateProfile(user.sub, user.orgId, dto);
   }
 
   @Patch('/profile/password')
@@ -24,6 +24,6 @@ export class UsersController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: UpdatePasswordDto,
   ) {
-    return this.usersService.updatePassword(user.sub, dto);
+    return this.usersService.updatePassword(user.sub, user.orgId, dto);
   }
 }

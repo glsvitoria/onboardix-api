@@ -6,6 +6,7 @@ import { UsersModule } from '@/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { StrategiesHelper } from '@/common/helpers/strategies.helper';
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
+import { env } from '@/config/env-validation';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AccessTokenStrategy } from './strategies/access-token.strategy';
     }),
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET || 'secret-key',
+      secret: env.ACCESS_TOKEN_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],
