@@ -7,10 +7,10 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
+import { LoginDto } from './dto/login.dto'
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
+import { ProtectedRoles } from '@/common/decorators/protected-routes';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +23,7 @@ export class AuthController {
   }
 
   @Get('me')
-  @AccessTokenAuth()
+  @ProtectedRoles()
   async profile(@CurrentUser() user: AuthenticatedUser) {
     return this.authService.profile(user.sub, user.orgId);
   }

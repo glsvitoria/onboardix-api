@@ -1,5 +1,3 @@
-import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
-import { Roles } from '@/common/decorators/roles.decorator';
 import {
   Body,
   Controller,
@@ -15,14 +13,14 @@ import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 import { UserRole } from '@/generated/prisma/enums';
 import { ValidationUUID } from '@/common/pipes/validation-uuid.pipe';
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
+import { ProtectedRoles } from '@/common/decorators/protected-routes';
 
 @Controller('employees')
-@AccessTokenAuth()
 export class EmployeesController {
   constructor(private employeesService: EmployeesService) {}
 
   @Post(':id/assign/:templateId')
-  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async assign(
     @Param('id', new ValidationUUID()) employeeId: string,
     @Param('templateId', new ValidationUUID()) templateId: string,
@@ -36,12 +34,13 @@ export class EmployeesController {
   }
 
   @Get('my-progress')
+  @ProtectedRoles(UserRole.MEMBER)
   async getMyProgress(@CurrentUser() user: AuthenticatedUser) {
     return this.employeesService.getEmployeeProgress(user.sub);
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async list(
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: FindAllPaginationDto,
@@ -50,6 +49,7 @@ export class EmployeesController {
   }
 
   @Patch('tasks/:taskId/toggle')
+  @ProtectedRoles(UserRole.MEMBER)
   async toggleTask(
     @CurrentUser() user: AuthenticatedUser,
     @Param('taskId', new ValidationUUID()) taskId: string,
@@ -59,7 +59,7 @@ export class EmployeesController {
   }
 
   @Get(':id/detail')
-  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async getDetail(
     @Param('id', new ValidationUUID()) employeeId: string,
     @CurrentUser() user: AuthenticatedUser,

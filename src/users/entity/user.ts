@@ -1,3 +1,4 @@
+import { IsNullable } from '@/common/decorators/is-nullable';
 import { UserRole } from '@/generated/prisma/enums';
 import { Exclude } from 'class-transformer';
 import {
@@ -35,6 +36,7 @@ export class UserEntity {
   @IsNotEmpty()
   createdAt: Date;
 
+  @IsNullable()
   @IsDate()
   @IsNotEmpty()
   updatedAt: Date | null;

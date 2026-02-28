@@ -1,7 +1,7 @@
 import { OrganizationEntity } from '@/organizations/entity/organization.entity';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { UserEntity } from './user.entity';
+import { UserEntity } from './user';
 
 export class UserWithOrganizationEntity extends UserEntity {
   @ValidateNested()

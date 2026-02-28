@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DashboardRepository } from './repositories/dashboard.repository';
 import { UsersRepository } from '@/users/repositories/users.repository';
 import { TemplatesRepository } from '@/templates/repositories/template.repository';
+import { EmployeesResumePaginationDto } from './dto/employees-resume-pagination.dto';
 
 @Injectable()
 export class DashboardService {
@@ -11,11 +12,15 @@ export class DashboardService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async getOrganizationStats(orgId: string) {
-    const employees =
-      await this.dashboardRepository.findOrganizationMembersWithTasks(orgId);
+  async employeesResume(
+    employeesResumePaginationDto: EmployeesResumePaginationDto,
+  ) {
+    const { employees } =
+      await this.dashboardRepository.findOrganizationMembersWithTasks(
+        employeesResumePaginationDto,
+      );
 
-    if (!employees || employees.length === 0) {
+    if (employees.length === 0) {
       return {
         totalEmployees: 0,
         averageProgress: 0,
@@ -59,26 +64,6 @@ export class DashboardService {
       this.dashboardRepository.getCompletionHistory(orgId),
     ]);
 
-    const historyGrouped = history.reduce(
-      (acc, curr) => {
-        const dateKey = new Date(curr.day).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-        });
-
-        acc[dateKey] = (acc[dateKey] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
-    const recentActivity = Object.entries(historyGrouped).map(
-      ([date, count]) => ({
-        date,
-        count,
-      }),
-    );
-
     return {
       cards: {
         totalEmployees: stats.totalEmployees,
@@ -97,7 +82,7 @@ export class DashboardService {
           { name: 'Concluídas', value: stats.completedTasks },
           { name: 'Pendentes', value: stats.pendingTasks },
         ],
-        recentActivity,
+        history,
       },
     };
   }

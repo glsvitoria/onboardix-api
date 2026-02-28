@@ -1,9 +1,13 @@
-import { User } from '@/generated/prisma/client';
+import { EmployeesResumePaginationDto } from '../dto/employees-resume-pagination.dto';
+import { UserWithTaskCompletedCountEntity } from '@/users/entity/user-with-task-completed-count';
 
 export abstract class DashboardRepository {
   abstract findOrganizationMembersWithTasks(
-    orgId: string,
-  ): Promise<UserWithTaskCount[]>;
+    employeesResumePaginationDto: EmployeesResumePaginationDto,
+  ): Promise<{
+    employees: UserWithTaskCompletedCountEntity[];
+    total: number;
+  }>;
   abstract getOrgStats(orgId: string): Promise<{
     totalEmployees: number;
     completedTasks: number;
@@ -12,11 +16,5 @@ export abstract class DashboardRepository {
   abstract getAverageProgress(orgId: string): Promise<number>;
   abstract getCompletionHistory(
     orgId: string,
-  ): Promise<{ day: Date; count: number }[]>;
+  ): Promise<{ date: Date; count: number }[]>;
 }
-
-export type UserWithTaskCount = Pick<User, 'id' | 'fullName' | 'email'> & {
-  assignedTasks: {
-    completedAt: Date | null;
-  }[];
-};

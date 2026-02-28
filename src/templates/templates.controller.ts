@@ -16,18 +16,16 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 import { UserRole } from '@/generated/prisma/enums';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
 import { ValidationUUID } from '@/common/pipes/validation-uuid.pipe';
+import { ProtectedRoles } from '@/common/decorators/protected-routes';
 
 @Controller('templates')
-@AccessTokenAuth()
 export class TemplatesController {
   constructor(private readonly templatesService: TemplatesService) {}
 
   @Post()
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() dto: CreateTemplateDto,
@@ -37,7 +35,7 @@ export class TemplatesController {
   }
 
   @Get()
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async findAll(
     @CurrentUser() user: AuthenticatedUser,
     @Query() findAllPaginationDto: FindAllPaginationDto,
@@ -46,7 +44,7 @@ export class TemplatesController {
   }
 
   @Get(':id')
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async findOne(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', new ValidationUUID()) id: string,
@@ -55,7 +53,7 @@ export class TemplatesController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async update(
     @Body() updateTemplateDto: UpdateTemplateDto,
     @CurrentUser() user: AuthenticatedUser,
@@ -65,7 +63,7 @@ export class TemplatesController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async remove(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', new ValidationUUID()) id: string,

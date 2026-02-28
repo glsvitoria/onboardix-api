@@ -9,7 +9,7 @@ import { compare } from 'bcryptjs';
 import { UsersRepository } from '@/users/repositories/users.repository';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { OrganizationsRepository } from '@/organizations/repositories/organizations.repository';
-import { UserWithOrganizationEntity } from '@/users/entity/user-with-organization.entity';
+import { UserWithOrganizationEntity } from '@/users/entity/user-with-organization';
 
 @Injectable()
 export class AuthService {

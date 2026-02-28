@@ -4,10 +4,10 @@ import { Controller, Patch, Body } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
+import { ProtectedRoles } from '@/common/decorators/protected-routes';
 
 @Controller('users')
-@AccessTokenAuth()
+@ProtectedRoles()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

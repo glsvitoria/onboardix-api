@@ -1,26 +1,25 @@
 import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { InvitationsService } from './invitations.service';
-import { AccessTokenAuth } from '@/common/decorators/access-token.decorator';
-import { Roles } from '@/common/decorators/roles.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 import { UserRole } from '@/generated/prisma/enums';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
+import { ProtectedRoles } from '@/common/decorators/protected-routes';
 
 @Controller('invitations')
 export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
 
   @Post('accept')
+  @ProtectedRoles(UserRole.MEMBER)
   async accept(@Body() acceptInvitationDto: AcceptInvitationDto) {
     return this.invitationsService.acceptInvitation(acceptInvitationDto);
   }
 
   @Post()
-  @AccessTokenAuth()
-  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async invite(
     @Body() createInvitationDto: CreateInvitationDto,
     @CurrentUser() user: AuthenticatedUser,
@@ -32,7 +31,7 @@ export class InvitationsController {
   }
 
   @Get()
-  @AccessTokenAuth()
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async list(
     @CurrentUser() user: AuthenticatedUser,
     @Query() findAllPaginationDto: FindAllPaginationDto,
