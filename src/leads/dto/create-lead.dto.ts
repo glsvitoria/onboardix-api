@@ -1,3 +1,4 @@
+import { ErrorMessageClassValidator } from '@/common/helpers/error-message-class-validator';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateLeadDto {
@@ -8,7 +9,7 @@ export class CreateLeadDto {
     },
   )
   @IsNotEmpty({
-    message: 'O email não pode ser vazio',
+    message: ErrorMessageClassValidator.required('e-mail', 'm'),
   })
   email: string;
 }

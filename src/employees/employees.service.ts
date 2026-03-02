@@ -9,6 +9,7 @@ import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper'
 import { TemplatesRepository } from '@/templates/repositories/template.repository';
 import { UserWithProgressEntity } from '@/users/entity/user-with-progress';
 import { UserOnboardingStatus } from '@/users/entity/user-progress';
+import { UserTaskWithTasksEntity } from '@/user-task/entity/user-task-with-tasks';
 
 @Injectable()
 export class EmployeesService {
@@ -61,17 +62,10 @@ export class EmployeesService {
       throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
     }
 
-    const tasks = employee.assignedTasks.map((ut) => ({
-      id: ut.taskId,
-      title: ut.task.title,
-      content: ut.task.content,
-      completed: !!ut.completedAt,
-      completedAt: ut.completedAt,
-      order: ut.task.order,
-    }));
-
-    const completedCount = tasks.filter((t) => t.completed).length;
-    const totalCount = tasks.length;
+    const completedCount = employee.assignedTasks.filter(
+      (t) => !!t.completedAt,
+    ).length;
+    const totalCount = employee.assignedTasks.length;
 
     return {
       id: employee.id,
@@ -84,22 +78,24 @@ export class EmployeesService {
         completed: completedCount,
         pending: totalCount - completedCount,
       },
-      tasks,
+      userTasks: employee.assignedTasks.map(
+        (userTask) => new UserTaskWithTasksEntity(userTask),
+      ),
     };
   }
 
   async getEmployeeProgress(userId: string, orgId: string) {
-    const tasks = await this.userTasksRepository.findByUserId(userId, orgId);
+    const userTasks = await this.userTasksRepository.findByUserId(userId, orgId);
 
-    const total = tasks.length;
-    const completed = tasks.filter((t) => t.completedAt !== null).length;
+    const total = userTasks.length;
+    const completed = userTasks.filter((t) => t.completedAt !== null).length;
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     return {
       percentage,
       total,
       completed,
-      tasks,
+      userTasks: userTasks.map((userTask) => new UserTaskWithTasksEntity(userTask)),
     };
   }
 
@@ -136,33 +132,8 @@ export class EmployeesService {
     });
 
     return {
-      users: usersFormatted.map(user => new UserWithProgressEntity(user)),
+      users: usersFormatted.map((user) => new UserWithProgressEntity(user)),
       total,
-    };
-  }
-
-  async toggleTaskStatus(
-    userId: string,
-    orgId: string,
-    taskId: string,
-    completed: boolean,
-  ) {
-    const userTask = await this.userTasksRepository.findByTaskId(
-      taskId,
-      userId,
-      orgId,
-    );
-
-    if (!userTask) {
-      throw new NotFoundException(
-        ErrorMessagesHelper.TASK_NOT_ASSIGNED_TO_USER,
-      );
-    }
-
-    await this.employeesRepository.updateTaskStatus(userId, taskId, completed);
-
-    return {
-      message: SuccessMessagesHelper.TASK_STATUS_UPDATED,
     };
   }
 }

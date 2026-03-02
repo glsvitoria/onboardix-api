@@ -8,11 +8,10 @@ import { UserRole } from '@/generated/prisma/enums';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 import { MailService } from '@/mail/mail.service';
+import { SALT_ROUNDS } from '@/auth/strategies/access-token.strategy';
 
 @Injectable()
 export class OrganizationsService {
-  private readonly SALT_ROUNDS = 10;
-
   constructor(
     private readonly organizationsRepository: OrganizationsRepository,
     private readonly usersRepository: UsersRepository,
@@ -23,24 +22,22 @@ export class OrganizationsService {
   async register(dto: RegisterOrganizationDto) {
     const slug = this.generateSlug(dto.companyName);
 
-    const userExists = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
+    const user = await this.usersRepository.findByEmail(dto.email);
 
-    if (userExists)
+    if (user)
       throw new ConflictException(
         ErrorMessagesHelper.USER_WITH_SAME_EMAIL_CREATED,
       );
 
-    const organizationSlugExists =
+    const organizationSlug =
       await this.organizationsRepository.findBySlug(slug);
 
-    if (organizationSlugExists)
+    if (organizationSlug)
       throw new ConflictException(
         ErrorMessagesHelper.ORGANIZATION_WITH_SAME_SLUG_CREATED,
       );
 
-    const hashedPassword = await hash(dto.password, this.SALT_ROUNDS);
+    const hashedPassword = await hash(dto.password, SALT_ROUNDS);
 
     await this.prisma.$transaction(async (tx) => {
       const organization = await this.organizationsRepository.create(

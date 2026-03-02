@@ -31,7 +31,7 @@ export class TemplatesController {
     @Body() dto: CreateTemplateDto,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.templatesService.create(dto, user.orgId);
+    return this.templatesService.create(user.sub, user.orgId, dto);
   }
 
   @Get()
@@ -40,16 +40,16 @@ export class TemplatesController {
     @CurrentUser() user: AuthenticatedUser,
     @Query() findAllPaginationDto: FindAllPaginationDto,
   ) {
-    return this.templatesService.findAll(findAllPaginationDto, user.orgId);
+    return this.templatesService.findAll(user.orgId, findAllPaginationDto);
   }
 
   @Get(':id')
   @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async findOne(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id', new ValidationUUID()) id: string,
+    @Param('id', new ValidationUUID()) templateId: string,
   ) {
-    return this.templatesService.findOne(id, user.orgId);
+    return this.templatesService.findOne(templateId, user.orgId);
   }
 
   @Patch(':id')
@@ -57,17 +57,22 @@ export class TemplatesController {
   async update(
     @Body() updateTemplateDto: UpdateTemplateDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id', new ValidationUUID()) id: string,
+    @Param('id', new ValidationUUID()) templateId: string,
   ) {
-    return this.templatesService.update(id, updateTemplateDto, user.orgId);
+    return this.templatesService.update(
+      user.sub,
+      user.orgId,
+      templateId,
+      updateTemplateDto,
+    );
   }
 
   @Delete(':id')
   @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async remove(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id', new ValidationUUID()) id: string,
+    @Param('id', new ValidationUUID()) templateId: string,
   ) {
-    return this.templatesService.remove(id, user.orgId);
+    return this.templatesService.remove(user.sub, user.orgId, templateId);
   }
 }

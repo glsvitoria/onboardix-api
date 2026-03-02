@@ -24,6 +24,7 @@ export abstract class TemplatesRepository {
   abstract findById(
     id: string,
     organizationId: string,
+    userId?: string,
   ): Promise<TemplateWithTasks | null>;
 
   abstract update(

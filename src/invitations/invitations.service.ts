@@ -17,11 +17,11 @@ import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
 import { UsersRepository } from '@/users/repositories/users.repository';
 import { MailService } from '@/mail/mail.service';
 import { OrganizationsRepository } from '@/organizations/repositories/organizations.repository';
+import { SALT_ROUNDS } from '@/auth/strategies/access-token.strategy';
+import { InvitationEntity } from './entity/invitation';
 
 @Injectable()
 export class InvitationsService {
-  private readonly SALT_ROUNDS = 10;
-
   constructor(
     private readonly invitationsRepository: InvitationsRepository,
     private readonly organizationsRepository: OrganizationsRepository,
@@ -29,47 +29,6 @@ export class InvitationsService {
     private readonly mailService: MailService,
     private readonly prisma: PrismaService,
   ) {}
-
-  async createInvitation(
-    createInvitationDto: CreateInvitationDto,
-    orgId: string,
-  ) {
-    const organizationExists =
-      await this.organizationsRepository.findById(orgId);
-
-    if (!organizationExists) {
-      throw new NotFoundException(ErrorMessagesHelper.ORGANIZATION_NOT_FOUND);
-    }
-
-    const userExists = await this.usersRepository.findByEmail(
-      createInvitationDto.email,
-    );
-
-    if (userExists)
-      throw new ConflictException(
-        ErrorMessagesHelper.USER_WITH_SAME_EMAIL_CREATED,
-      );
-
-    const token = randomBytes(32).toString('hex');
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
-
-    await this.invitationsRepository.create({
-      email: createInvitationDto.email,
-      role: 'MEMBER',
-      token,
-      expiresAt,
-      organization: { connect: { id: orgId } },
-    });
-
-    this.mailService
-      .sendInvitationEmployee(createInvitationDto.email, 'Empresa Teste', token)
-      .catch((err) => console.error('Erro silencioso no envio de email:', err));
-
-    return {
-      message: SuccessMessagesHelper.INVITATION_CREATED,
-    };
-  }
 
   async acceptInvitation(acceptInvitationDto: AcceptInvitationDto) {
     const invitation = await this.invitationsRepository.findByToken(
@@ -84,7 +43,7 @@ export class InvitationsService {
 
     const hashedPassword = await hash(
       acceptInvitationDto.password,
-      this.SALT_ROUNDS,
+      SALT_ROUNDS,
     );
 
     await this.prisma.$transaction(async (tx) => {
@@ -107,6 +66,54 @@ export class InvitationsService {
     };
   }
 
+  async createInvitation(
+    userId: string,
+    orgId: string,
+    createInvitationDto: CreateInvitationDto,
+  ) {
+    const organization = await this.organizationsRepository.findById(
+      orgId,
+      userId,
+    );
+
+    if (!organization) {
+      throw new NotFoundException(ErrorMessagesHelper.ORGANIZATION_NOT_FOUND);
+    }
+
+    const user = await this.usersRepository.findByEmail(
+      createInvitationDto.email,
+    );
+
+    if (user)
+      throw new ConflictException(
+        ErrorMessagesHelper.USER_WITH_SAME_EMAIL_CREATED,
+      );
+
+    const token = randomBytes(32).toString('hex');
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    await this.invitationsRepository.create({
+      email: createInvitationDto.email,
+      role: 'MEMBER',
+      token,
+      expiresAt,
+      organization: { connect: { id: orgId } },
+    });
+
+    this.mailService
+      .sendInvitationEmployee(
+        createInvitationDto.email,
+        organization.name,
+        token,
+      )
+      .catch((err) => console.error('Erro silencioso no envio de email:', err));
+
+    return {
+      message: SuccessMessagesHelper.INVITATION_CREATED,
+    };
+  }
+
   async list(orgId: string, findAllPaginationDto: FindAllPaginationDto) {
     findAllPaginationDto.organizationId = orgId;
 
@@ -114,7 +121,9 @@ export class InvitationsService {
       await this.invitationsRepository.findAll(findAllPaginationDto);
 
     return {
-      invitations,
+      invitations: invitations.map(
+        (invitation) => new InvitationEntity(invitation),
+      ),
       total,
     };
   }

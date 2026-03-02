@@ -1,5 +1,8 @@
+import { ErrorMessageClassValidator } from '@/common/helpers/error-message-class-validator';
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
+  ArrayUnique,
   IsArray,
   IsNotEmpty,
   IsOptional,
@@ -9,34 +12,43 @@ import {
 
 class CreateTaskDto {
   @IsString({
-    message: 'O título da atividade deve ser uma string',
+    message: ErrorMessageClassValidator.string('título da tarefa', 'f'),
   })
   @IsNotEmpty({
-    message: 'O título da atividade não pode ser vazio',
+    message: ErrorMessageClassValidator.required('título da tarefa', 'f'),
   })
   title: string;
 
-  @IsString()
+  @IsString({
+    message: ErrorMessageClassValidator.required('conteúdo da tarefa', 'm'),
+  })
   @IsOptional()
   content?: string;
 }
 
 export class CreateTemplateDto {
   @IsString({
-    message: 'O título do template deve ser uma string',
+    message: ErrorMessageClassValidator.string('título do roteiro', 'm'),
   })
   @IsNotEmpty({
-    message: 'O título do template não pode ser vazio',
+    message: ErrorMessageClassValidator.required('título do roteiro', 'm'),
   })
   title: string;
 
   @IsString({
-    message: 'A descrição deve ser uma string',
+    message: ErrorMessageClassValidator.string('descrição do roteiro', 'm'),
   })
   @IsOptional()
   description?: string;
 
-  @IsArray()
+  @IsArray({ message: ErrorMessageClassValidator.array('tarefas') })
+  @ArrayMinSize(1, {
+    message: 'O roteiro deve ter pelo menos uma tarefa criada',
+  })
+  @ArrayUnique((o: CreateTaskDto) => o.title, {
+    message:
+      'O roteiro possui tarefas duplicadas, com títulos iguais para diferentes itens',
+  })
   @ValidateNested({ each: true })
   @Type(() => CreateTaskDto)
   tasks: CreateTaskDto[];

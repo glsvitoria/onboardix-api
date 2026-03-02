@@ -11,7 +11,7 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
   async create(data: Prisma.TemplateCreateInput) {
     return await this.prismaService.template.create({
       data,
-      include: { tasks: true },
+      include: { tasks: { orderBy: { order: 'asc' } } },
     });
   }
 
@@ -55,11 +55,18 @@ export class PrismaTemplatesRepository implements TemplatesRepository {
     };
   }
 
-  async findById(id: string, organizationId: string) {
+  async findById(id: string, organizationId: string, userId?: string) {
     return await this.prismaService.template.findFirst({
       where: {
         id,
         organizationId,
+        organization: {
+          users: {
+            some: {
+              id: userId,
+            },
+          },
+        },
       },
       include: {
         tasks: {

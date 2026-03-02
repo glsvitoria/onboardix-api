@@ -1,20 +1,21 @@
 import { PasswordMatch } from '@/common/decorators/password-match.decorator';
+import { ErrorMessageClassValidator } from '@/common/helpers/error-message-class-validator';
 import { IsEmail, IsNotEmpty, IsString, Min, MinLength } from 'class-validator';
 
 export class RegisterOrganizationDto {
   @IsString({
-    message: 'O nome da empresa deve ser uma string',
+    message: ErrorMessageClassValidator.string('nome da empresa', 'm'),
   })
   @IsNotEmpty({
-    message: 'O nome da empresa não pode ser vazio',
+    message: ErrorMessageClassValidator.required('nome da empresa', 'm'),
   })
   companyName: string;
 
   @IsString({
-    message: 'O nome do dono da empresa deve ser uma string',
+    message: ErrorMessageClassValidator.string('nome do dono da empresa', 'm'),
   })
   @IsNotEmpty({
-    message: 'O nome do dono da empresa não pode ser vazio',
+    message: ErrorMessageClassValidator.required('nome do dono da empresa', 'm'),
   })
   ownerName: string;
 
@@ -25,26 +26,26 @@ export class RegisterOrganizationDto {
     },
   )
   @IsNotEmpty({
-    message: 'O email não pode ser vazio',
+    message: ErrorMessageClassValidator.required('e-mail', 'm'),
   })
   email: string;
 
   @IsString({
-    message: 'A senha deve ser uma string',
+    message: ErrorMessageClassValidator.string('senha', 'f'),
   })
   @IsNotEmpty({
-    message: 'A senha não pode ser vazia',
+    message: ErrorMessageClassValidator.required('senha', 'f'),
   })
   @MinLength(6, {
-    message: 'A senha deve ter no mínimo 6 dígitos',
+    message: ErrorMessageClassValidator.minValue('senha', 6),
   })
   password: string;
 
   @IsString({
-    message: 'A confirmação de senha deve ser uma string',
+    message: ErrorMessageClassValidator.string('confirmação de senha', 'f'),
   })
   @IsNotEmpty({
-    message: 'A confirmação de senha não pode ser vazia',
+    message: ErrorMessageClassValidator.required('confirmação de senha', 'f'),
   })
   @PasswordMatch('password', {
     message: 'A confirmação de senha deve ser igual a senha',

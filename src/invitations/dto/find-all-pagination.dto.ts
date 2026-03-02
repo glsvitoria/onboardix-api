@@ -13,7 +13,7 @@ export class FindAllPaginationDto extends PaginationQueryDto<'createdAt'> {
 
   @IsString()
   @IsOptional()
-  organizationId: string;
+  organizationId?: string;
 
   where(): Prisma.InvitationWhereInput {
     const AND: Prisma.Enumerable<Prisma.InvitationWhereInput> = [];

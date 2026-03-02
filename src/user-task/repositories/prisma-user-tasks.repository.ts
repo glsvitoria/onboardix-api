@@ -15,9 +15,7 @@ export class PrismaUserTasksRepository implements UserTasksRepository {
         },
       },
       include: {
-        task: {
-          select: { title: true, content: true, link: true, order: true },
-        },
+        task: true,
       },
       orderBy: { task: { order: 'asc' } },
     });

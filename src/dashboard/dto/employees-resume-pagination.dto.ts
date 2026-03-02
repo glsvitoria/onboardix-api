@@ -13,7 +13,7 @@ export class EmployeesResumePaginationDto extends PaginationQueryDto<'createdAt'
 
   @IsString()
   @IsOptional()
-  organizationId: string;
+  organizationId?: string;
 
   where(): Prisma.UserWhereInput {
     const AND: Prisma.Enumerable<Prisma.UserWhereInput> = [];

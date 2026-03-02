@@ -1,37 +1,17 @@
 import { IsNullable } from '@/common/decorators/is-nullable';
-import { UserRole } from '@/generated/prisma/enums';
 import { Exclude } from 'class-transformer';
 import {
-  IsEmail,
   IsNotEmpty,
   IsString,
   IsUUID,
-  IsEnum,
   IsDate,
+  IsNumber,
 } from 'class-validator';
 
-export class UserEntity {
+export class TaskEntity {
   @IsUUID()
   @IsNotEmpty()
   id: string;
-
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  fullName: string;
-
-  @IsEnum(UserRole)
-  role: UserRole;
-
-  @Exclude()
-  password_hash: string;
-
-  @Exclude()
-  @IsUUID()
-  organizationId: string;
 
   @IsDate()
   @IsNotEmpty()
@@ -48,7 +28,29 @@ export class UserEntity {
   @IsNotEmpty()
   deletedAt: Date | null;
 
-  constructor(partial: Partial<UserEntity>) {
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  order: number;
+
+  @IsNullable()
+  @IsString()
+  @IsNumber()
+  content: string | null;
+
+  @IsNullable()
+  @IsString()
+  @IsNumber()
+  link: string;
+
+  @Exclude()
+  @IsUUID()
+  templateId: string;
+
+  constructor(partial: Partial<TaskEntity>) {
     Object.assign(this, partial);
   }
 }

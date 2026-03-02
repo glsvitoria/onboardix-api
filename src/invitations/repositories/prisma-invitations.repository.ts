@@ -13,7 +13,7 @@ export class PrismaInvitationsRepository implements InvitationsRepository {
   }
 
   async findByToken(token: string) {
-    return await this.prisma.invitation.findUnique({
+    return await this.prisma.invitation.findFirst({
       where: { token },
       include: { organization: { select: { name: true } } },
     });

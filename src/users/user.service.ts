@@ -9,15 +9,22 @@ import { UsersRepository } from './repositories/users.repository';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { SALT_ROUNDS } from '@/auth/strategies/access-token.strategy';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async updateProfile(userId: string, orgId: string, dto: UpdateProfileDto) {
+  async findOne(userId: string, orgId: string) {
     const user = await this.usersRepository.findById(userId, orgId);
 
     if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
+
+    return user;
+  }
+
+  async updateProfile(userId: string, orgId: string, dto: UpdateProfileDto) {
+    await this.findOne(userId, orgId);
 
     return this.usersRepository.update(userId, {
       fullName: dto.fullName,
@@ -26,9 +33,7 @@ export class UsersService {
   }
 
   async updatePassword(userId: string, orgId: string, dto: UpdatePasswordDto) {
-    const user = await this.usersRepository.findById(userId, orgId);
-
-    if (!user) throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
+    const user = await this.findOne(userId, orgId);
 
     const isPasswordValid = await compare(
       dto.currentPassword,
@@ -39,7 +44,7 @@ export class UsersService {
       throw new UnauthorizedException('A senha atual está incorreta');
     }
 
-    const hashedPassword = await hash(dto.newPassword, 10);
+    const hashedPassword = await hash(dto.newPassword, SALT_ROUNDS);
 
     await this.usersRepository.update(userId, {
       password_hash: hashedPassword,

@@ -1,3 +1,4 @@
+import { ErrorMessageClassValidator } from '@/common/helpers/error-message-class-validator';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginDto {
@@ -8,15 +9,15 @@ export class LoginDto {
     },
   )
   @IsNotEmpty({
-    message: 'O e-mail é obrigatório e não poder ser vazio',
+    message: ErrorMessageClassValidator.required('e-mail', 'm'),
   })
   email: string;
 
   @IsString({
-    message: 'A senha deve ser uma string',
+    message: ErrorMessageClassValidator.string('senha', 'f'),
   })
   @IsNotEmpty({
-    message: 'A senha é obrigatório e não poder ser vazia',
+    message: ErrorMessageClassValidator.required('senha', 'f'),
   })
   password: string;
 }

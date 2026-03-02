@@ -25,8 +25,9 @@ export class InvitationsController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.invitationsService.createInvitation(
-      createInvitationDto,
+      user.sub,
       user.orgId,
+      createInvitationDto,
     );
   }
 

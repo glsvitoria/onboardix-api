@@ -12,12 +12,12 @@ import { PrismaOrganizationsRepository } from '@/organizations/repositories/pris
   providers: [
     InvitationsService,
     {
-      provide: OrganizationsRepository,
-      useClass: PrismaOrganizationsRepository,
-    },
-    {
       provide: InvitationsRepository,
       useClass: PrismaInvitationsRepository,
+    },
+    {
+      provide: OrganizationsRepository,
+      useClass: PrismaOrganizationsRepository,
     },
     {
       provide: UsersRepository,

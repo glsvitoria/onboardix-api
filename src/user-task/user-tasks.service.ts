@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserTasksRepository } from './repositories/user-tasks.repositories';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
+import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 
 @Injectable()
 export class UserTasksService {
@@ -25,6 +26,10 @@ export class UserTasksService {
     if (!task)
       throw new NotFoundException(ErrorMessagesHelper.TASK_NOT_FOUND_TO_USER);
 
-    return this.userTasksRepository.updateStatus(userTaskId, userId, completed);
+    await this.userTasksRepository.updateStatus(userTaskId, userId, completed);
+
+    return {
+      message: SuccessMessagesHelper.TASK_STATUS_UPDATED,
+    };
   }
 }

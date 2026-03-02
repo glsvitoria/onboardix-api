@@ -5,9 +5,11 @@ export class UpdateProfileDto {
     message: 'O nome deve ser uma string',
   })
   @IsOptional()
-  fullName: string;
+  fullName?: string;
 
-  @IsEmail()
+  @IsEmail({}, {
+    message: "O e-mail deve ser válido"
+  })
   @IsOptional()
-  email: string;
+  email?: string;
 }

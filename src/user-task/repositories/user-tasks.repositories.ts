@@ -1,14 +1,14 @@
 import { UserTask, Task } from '@/generated/prisma/client';
 
-export type UserTaskWithDetails = UserTask & {
-  task: Pick<Task, 'title' | 'content' | 'link' | 'order'>;
+export type UserTaskWithTasks = UserTask & {
+  task: Task;
 };
 
 export abstract class UserTasksRepository {
   abstract findByUserId(
     userId: string,
     orgId?: string,
-  ): Promise<UserTaskWithDetails[]>;
+  ): Promise<UserTaskWithTasks[]>;
   abstract findById(
     userTaskId: string,
     userId: string,

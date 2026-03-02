@@ -1,4 +1,4 @@
-import { Invitation, Prisma, User } from '@/generated/prisma/client';
+import { Invitation, Prisma } from '@/generated/prisma/client';
 import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 export abstract class InvitationsRepository {

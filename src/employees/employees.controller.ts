@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
@@ -26,11 +18,7 @@ export class EmployeesController {
     @Param('templateId', new ValidationUUID()) templateId: string,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.employeesService.assignTemplate(
-      userId,
-      templateId,
-      user.orgId,
-    );
+    return this.employeesService.assignTemplate(userId, templateId, user.orgId);
   }
 
   @Get('my-progress')
@@ -46,21 +34,6 @@ export class EmployeesController {
     @Query() query: FindAllPaginationDto,
   ) {
     return this.employeesService.listEmployees(user.orgId, query);
-  }
-
-  @Patch('tasks/:taskId/toggle')
-  @ProtectedRoles(UserRole.MEMBER)
-  async toggleTask(
-    @CurrentUser() user: AuthenticatedUser,
-    @Param('taskId', new ValidationUUID()) taskId: string,
-    @Body('completed') completed: boolean,
-  ) {
-    return this.employeesService.toggleTaskStatus(
-      user.sub,
-      user.orgId,
-      taskId,
-      completed,
-    );
   }
 
   @Get(':userId/detail')

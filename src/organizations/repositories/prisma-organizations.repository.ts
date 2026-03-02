@@ -15,9 +15,19 @@ export class PrismaOrganizationsRepository implements OrganizationsRepository {
     return await client.organization.create({ data });
   }
 
-  async findById(id: string) {
-    return await this.prisma.organization.findFirst({ where: { id } });
+  async findById(id: string, userId?: string) {
+    return await this.prisma.organization.findFirst({
+      where: {
+        id,
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
   }
+
 
   async findBySlug(slug: string) {
     return await this.prisma.organization.findFirst({ where: { slug } });

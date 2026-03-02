@@ -5,16 +5,36 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
+import { OrganizationsRepository } from '@/organizations/repositories/organizations.repository';
+import { TemplateEntity } from './entity/template';
+
+interface UpdateTask {
+  id: string;
+  title: string;
+  content?: string;
+  order: number;
+}
 
 @Injectable()
 export class TemplatesService {
-  constructor(private templatesRepository: TemplatesRepository) {}
+  constructor(
+    private templatesRepository: TemplatesRepository,
+    private organizationsRepository: OrganizationsRepository,
+  ) {}
 
-  async create(dto: CreateTemplateDto, organizationId: string) {
+  async create(userId: string, orgId: string, dto: CreateTemplateDto) {
+    const organization = await this.organizationsRepository.findById(
+      orgId,
+      userId,
+    );
+
+    if (!organization)
+      throw new NotFoundException(ErrorMessagesHelper.ORGANIZATION_NOT_FOUND);
+
     await this.templatesRepository.create({
       title: dto.title,
       description: dto.description,
-      organization: { connect: { id: organizationId } },
+      organization: { connect: { id: orgId } },
       tasks: {
         create: dto.tasks.map((task, index) => ({
           title: task.title,
@@ -30,18 +50,25 @@ export class TemplatesService {
   }
 
   async findAll(
-    findAllPaginationDto: FindAllPaginationDto,
     organizationId: string,
+    findAllPaginationDto: FindAllPaginationDto,
   ) {
     findAllPaginationDto.organizationId = organizationId;
 
-    return this.templatesRepository.findAll(findAllPaginationDto);
+    const { templates, total } =
+      await this.templatesRepository.findAll(findAllPaginationDto);
+
+    return {
+      templates: templates.map((template) => new TemplateEntity(template)),
+      total,
+    };
   }
 
-  async findOne(id: string, organizationId: string) {
+  async findOne(templateId: string, organizationId: string, userId?: string) {
     const template = await this.templatesRepository.findById(
-      id,
+      templateId,
       organizationId,
+      userId,
     );
 
     if (!template)
@@ -51,18 +78,53 @@ export class TemplatesService {
   }
 
   async update(
-    id: string,
+    userId: string,
+    orgId: string,
+    templateId: string,
     updateTemplateDto: UpdateTemplateDto,
-    organizationId: string,
   ) {
-    await this.findOne(id, organizationId);
+    await this.findOne(templateId, orgId, userId);
 
-    await this.templatesRepository.update(id, organizationId, {
+    const { tasksToCreate, tasksToUpdate } = updateTemplateDto.tasks.reduce<{
+      tasksToCreate: Omit<UpdateTask, 'id'>[];
+      tasksToUpdate: UpdateTask[];
+    }>(
+      (acc, task, index) => {
+        if (task.id) {
+          acc.tasksToUpdate.push({
+            ...task,
+            id: task.id,
+            order: index,
+          });
+        } else {
+          const { id, ...taskWithoutId } = task;
+
+          acc.tasksToCreate.push({
+            ...taskWithoutId,
+            order: index,
+          });
+        }
+
+        return acc;
+      },
+      { tasksToCreate: [], tasksToUpdate: [] },
+    );
+
+    await this.templatesRepository.update(templateId, orgId, {
       ...updateTemplateDto,
       tasks: updateTemplateDto.tasks
         ? {
-            deleteMany: {},
-            create: updateTemplateDto.tasks.map((task, index) => ({
+            update: tasksToUpdate.map((task) => ({
+              where: {
+                id: task.id,
+              },
+              data: {
+                title: task.title,
+                content: task.content,
+                order: task.order,
+              },
+            })),
+            create: tasksToCreate.map((task, index) => ({
               title: task.title,
               content: task.content,
               order: index,
@@ -76,10 +138,10 @@ export class TemplatesService {
     };
   }
 
-  async remove(id: string, organizationId: string) {
-    await this.findOne(id, organizationId);
+  async remove(userId: string, orgId: string, templateId: string) {
+    await this.findOne(templateId, orgId, userId);
 
-    await this.templatesRepository.delete(id);
+    await this.templatesRepository.delete(templateId);
 
     return {
       message: SuccessMessagesHelper.TEMPLATE_DELETED,
