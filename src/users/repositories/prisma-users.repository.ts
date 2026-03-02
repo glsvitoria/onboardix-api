@@ -22,7 +22,7 @@ export class PrismaUsersRepository implements UsersRepository {
     });
   }
 
-  async findById(id: string, orgId: string) {
+  async findById(id: string, orgId?: string) {
     return await this.prisma.user.findFirst({
       where: { id, organizationId: orgId },
     });

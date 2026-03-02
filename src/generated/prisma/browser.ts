@@ -52,3 +52,8 @@ export type Invitation = Prisma.InvitationModel
  * 
  */
 export type Lead = Prisma.LeadModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel

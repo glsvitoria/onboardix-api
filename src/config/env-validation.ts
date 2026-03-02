@@ -32,6 +32,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   ACCESS_TOKEN_SECRET: string;
+  
+  @IsString()
+  @IsNotEmpty()
+  REFRESH_TOKEN_SECRET: string;
 
   @IsString()
   @IsNotEmpty()

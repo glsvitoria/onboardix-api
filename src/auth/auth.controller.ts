@@ -7,10 +7,13 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto'
+import { LoginDto } from './dto/login.dto';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
 import { ProtectedRoles } from '@/common/decorators/protected-routes';
+import { RefreshTokenProtected } from '@/common/decorators/refresh-token';
+import { CurrentRefreshToken } from '@/common/decorators/current-refresh-token';
+import type { RefreshTokenUser } from '@/common/types/refresh-token-user';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +29,11 @@ export class AuthController {
   @ProtectedRoles()
   async profile(@CurrentUser() user: AuthenticatedUser) {
     return this.authService.profile(user.sub, user.orgId);
+  }
+
+  @Post()
+  @RefreshTokenProtected()
+  async refreshToken(@CurrentRefreshToken() user: RefreshTokenUser) {
+    return this.authService.refresh(user.sub, user.refreshToken);
   }
 }
