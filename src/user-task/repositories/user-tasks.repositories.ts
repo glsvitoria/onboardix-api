@@ -5,10 +5,19 @@ export type UserTaskWithDetails = UserTask & {
 };
 
 export abstract class UserTasksRepository {
-  abstract findByUserId(userId: string): Promise<UserTaskWithDetails[]>;
+  abstract findByUserId(
+    userId: string,
+    orgId?: string,
+  ): Promise<UserTaskWithDetails[]>;
   abstract findById(
     userTaskId: string,
     userId: string,
+    organizationId: string,
+  ): Promise<UserTask | null>;
+  abstract findByTaskId(
+    taskId: string,
+    userId: string,
+    organizationId: string,
   ): Promise<UserTask | null>;
   abstract updateStatus(
     userTaskId: string,

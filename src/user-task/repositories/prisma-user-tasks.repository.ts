@@ -6,9 +6,14 @@ import { Injectable } from '@nestjs/common';
 export class PrismaUserTasksRepository implements UserTasksRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findByUserId(userId: string) {
+  async findByUserId(userId: string, organizationId: string) {
     return await this.prisma.userTask.findMany({
-      where: { userId },
+      where: {
+        userId,
+        user: {
+          organizationId,
+        },
+      },
       include: {
         task: {
           select: { title: true, content: true, link: true, order: true },
@@ -18,9 +23,27 @@ export class PrismaUserTasksRepository implements UserTasksRepository {
     });
   }
 
-  async findById(userTaskId: string, userId: string) {
+  async findById(userTaskId: string, userId: string, organizationId: string) {
     return await this.prisma.userTask.findFirst({
-      where: { id: userTaskId, userId },
+      where: {
+        id: userTaskId,
+        userId,
+        user: {
+          organizationId,
+        },
+      },
+    });
+  }
+
+  async findByTaskId(taskId: string, userId: string, organizationId: string) {
+    return await this.prisma.userTask.findFirst({
+      where: {
+        userId,
+        taskId,
+        user: {
+          organizationId,
+        },
+      },
     });
   }
 

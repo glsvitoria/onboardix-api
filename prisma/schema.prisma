@@ -104,7 +104,7 @@ model UserTask {
   userId      String    @db.Uuid @map("user_id")
   taskId      String    @db.Uuid @map("task_id")
   
-  completedAt DateTime? @map("completed_at") // Se null, não está concluída
+  completedAt DateTime? @map("completed_at")
   
   user        User      @relation(fields: [userId], references: [id])
   task        Task      @relation(fields: [taskId], references: [id])
@@ -113,7 +113,6 @@ model UserTask {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  @@unique([userId, taskId])
   @@map("user_tasks")
 }
 
@@ -140,4 +139,6 @@ model Lead {
   email     String   @unique
   createdAt DateTime @default(now())
   deletedAt      DateTime? @map("deleted_at")
+
+  @@map("leads")
 }

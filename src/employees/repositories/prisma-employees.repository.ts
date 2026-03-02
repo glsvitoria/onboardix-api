@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma/prisma.service';
-import { Prisma, User } from '@/generated/prisma/client';
+import { Prisma } from '@/generated/prisma/client';
 import { EmployeesRepository } from './employees.repository';
 import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
@@ -8,45 +8,10 @@ import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 export class PrismaEmployeesRepository implements EmployeesRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findTemplateWithTasks(templateId: string, orgId: string) {
-    return await this.prisma.template.findFirst({
-      where: {
-        id: templateId,
-        organizationId: orgId,
-      },
-      include: {
-        tasks: {
-          select: { id: true },
-        },
-      },
-    });
-  }
-
   async assignTasks(data: Prisma.UserTaskCreateManyInput[]) {
     return await this.prisma.userTask.createMany({
       data,
       skipDuplicates: true,
-    });
-  }
-
-  async findUserTask(userId: string, taskId: string) {
-    return await this.prisma.userTask.findFirst({
-      where: { userId, taskId },
-    });
-  }
-
-  async updateTaskStatus(userId: string, taskId: string, completed: boolean) {
-    return await this.prisma.userTask.update({
-      where: {
-        userId_taskId: {
-          // Chave composta se você definiu @@id([userId, taskId]) no schema
-          userId,
-          taskId,
-        },
-      },
-      data: {
-        completedAt: completed ? new Date() : null,
-      },
     });
   }
 
@@ -105,6 +70,18 @@ export class PrismaEmployeesRepository implements EmployeesRepository {
             task: { order: 'asc' },
           },
         },
+      },
+    });
+  }
+
+  async updateTaskStatus(userId: string, taskId: string, completed: boolean) {
+    await this.prisma.userTask.updateMany({
+      where: {
+        userId,
+        taskId,
+      },
+      data: {
+        completedAt: completed ? new Date() : null,
       },
     });
   }

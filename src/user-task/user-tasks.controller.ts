@@ -23,6 +23,6 @@ export class UserTasksController {
     @CurrentUser() user: AuthenticatedUser,
     @Param('userTaskId', new ValidationUUID()) userTaskId: string,
   ) {
-    return this.userTasksService.toggleTask(user.sub, userTaskId, completed);
+    return this.userTasksService.toggleTask(user.sub, user.orgId, userTaskId, completed);
   }
 }

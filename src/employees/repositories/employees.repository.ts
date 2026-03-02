@@ -1,29 +1,10 @@
-import {
-  Prisma,
-  Task,
-  Template,
-  User,
-  UserTask,
-} from '@/generated/prisma/client';
+import { Prisma, Task, User, UserTask } from '@/generated/prisma/client';
 import { FindAllPaginationDto } from '../dto/find-all-pagination.dto';
 
 export abstract class EmployeesRepository {
-  abstract findTemplateWithTasks(
-    templateId: string,
-    orgId: string,
-  ): Promise<(Template & { tasks: { id: string }[] }) | null>;
   abstract assignTasks(
     data: Prisma.UserTaskCreateManyInput[],
   ): Promise<Prisma.BatchPayload>;
-  abstract updateTaskStatus(
-    userId: string,
-    taskId: string,
-    completed: boolean,
-  ): Promise<UserTask>;
-  abstract findUserTask(
-    userId: string,
-    taskId: string,
-  ): Promise<UserTask | null>;
   abstract findAllWithUserTasks(
     findAllPaginationDto: FindAllPaginationDto,
   ): Promise<{
@@ -34,6 +15,11 @@ export abstract class EmployeesRepository {
     userId: string,
     orgId: string,
   ): Promise<UserWithUserTasks | null>;
+  abstract updateTaskStatus(
+    userId: string,
+    taskId: string,
+    completed: boolean,
+  ): Promise<void>;
 }
 
 export enum UserInvitationStatus {

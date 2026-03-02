@@ -16,3 +16,13 @@ export const UserRole = {
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const TaskType = {
+  TEXT: 'TEXT',
+  LINK: 'LINK',
+  CHECKLIST: 'CHECKLIST',
+  VIDEO: 'VIDEO'
+} as const
+
+export type TaskType = (typeof TaskType)[keyof typeof TaskType]

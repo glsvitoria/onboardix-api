@@ -6,21 +6,22 @@ import { UserTasksRepository } from '@/user-task/repositories/user-tasks.reposit
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
+import { TemplatesRepository } from '@/templates/repositories/template.repository';
+import { UserWithProgressEntity } from '@/users/entity/user-with-progress';
+import { UserOnboardingStatus } from '@/users/entity/user-progress';
 
 @Injectable()
 export class EmployeesService {
   constructor(
     private readonly employeesRepository: EmployeesRepository,
+    private readonly templatesRepository: TemplatesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly userTasksRepository: UserTasksRepository,
     private readonly mailService: MailService,
   ) {}
 
   async assignTemplate(userId: string, templateId: string, orgId: string) {
-    const template = await this.employeesRepository.findTemplateWithTasks(
-      templateId,
-      orgId,
-    );
+    const template = await this.templatesRepository.findById(templateId, orgId);
 
     if (!template)
       throw new NotFoundException(ErrorMessagesHelper.TEMPLATE_NOT_FOUND);
@@ -50,83 +51,7 @@ export class EmployeesService {
     };
   }
 
-  async getEmployeeProgress(userId: string) {
-    const tasks = await this.userTasksRepository.findByUserId(userId);
-
-    const total = tasks.length;
-    const completed = tasks.filter((t) => t.completedAt !== null).length;
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-    return {
-      percentage,
-      total,
-      completed,
-      tasks,
-    };
-  }
-
-  async toggleTaskStatus(userId: string, taskId: string, completed: boolean) {
-    const userTask = await this.employeesRepository.findUserTask(
-      userId,
-      taskId,
-    );
-
-    if (!userTask) {
-      throw new NotFoundException(
-        ErrorMessagesHelper.TASK_NOT_ASSIGNED_TO_USER,
-      );
-    }
-
-    await this.employeesRepository.updateTaskStatus(userId, taskId, completed);
-
-    return {
-      message: SuccessMessagesHelper.TASK_STATUS_UPDATED,
-    };
-  }
-
-  async listEmployees(
-    orgId: string,
-    findAllPaginationDto: FindAllPaginationDto,
-  ) {
-    findAllPaginationDto.organizationId = orgId;
-
-    const { users, total } =
-      await this.employeesRepository.findAllWithUserTasks(findAllPaginationDto);
-
-    const usersFormatted = users.map((user) => {
-      const totalTasks = user.assignedTasks.length;
-      const completedTasks = user.assignedTasks.filter(
-        (t) => t.completedAt,
-      ).length;
-      const progress =
-        totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      return {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        createdAt: user.createdAt,
-        onboarding: {
-          status:
-            progress === 0
-              ? 'NOT_STARTED'
-              : progress === 100
-                ? 'COMPLETED'
-                : 'IN_PROGRESS',
-          progress: `${progress}%`,
-          taskCount: totalTasks,
-        },
-      };
-    });
-
-    return {
-      users: usersFormatted,
-      total,
-    };
-  }
-
-  async getEmployeeDetail(userId: string, orgId: string) {
+  async getEmployeeDetail(orgId: string, userId: string) {
     const employee = await this.employeesRepository.findEmployeeDetail(
       userId,
       orgId,
@@ -160,6 +85,84 @@ export class EmployeesService {
         pending: totalCount - completedCount,
       },
       tasks,
+    };
+  }
+
+  async getEmployeeProgress(userId: string, orgId: string) {
+    const tasks = await this.userTasksRepository.findByUserId(userId, orgId);
+
+    const total = tasks.length;
+    const completed = tasks.filter((t) => t.completedAt !== null).length;
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return {
+      percentage,
+      total,
+      completed,
+      tasks,
+    };
+  }
+
+  async listEmployees(
+    orgId: string,
+    findAllPaginationDto: FindAllPaginationDto,
+  ) {
+    findAllPaginationDto.organizationId = orgId;
+
+    const { users, total } =
+      await this.employeesRepository.findAllWithUserTasks(findAllPaginationDto);
+
+    const usersFormatted = users.map((user) => {
+      const totalTasks = user.assignedTasks.length;
+      const completedTasks = user.assignedTasks.filter(
+        (t) => t.completedAt,
+      ).length;
+      const progress =
+        totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+      return {
+        ...user,
+        onboarding: {
+          status:
+            progress === 0
+              ? UserOnboardingStatus.NOT_STARTED
+              : progress === 100
+                ? UserOnboardingStatus.COMPLETED
+                : UserOnboardingStatus.IN_PROGRESS,
+          progress: `${progress}%`,
+          taskCount: totalTasks,
+        },
+      };
+    });
+
+    return {
+      users: usersFormatted.map(user => new UserWithProgressEntity(user)),
+      total,
+    };
+  }
+
+  async toggleTaskStatus(
+    userId: string,
+    orgId: string,
+    taskId: string,
+    completed: boolean,
+  ) {
+    const userTask = await this.userTasksRepository.findByTaskId(
+      taskId,
+      userId,
+      orgId,
+    );
+
+    if (!userTask) {
+      throw new NotFoundException(
+        ErrorMessagesHelper.TASK_NOT_ASSIGNED_TO_USER,
+      );
+    }
+
+    await this.employeesRepository.updateTaskStatus(userId, taskId, completed);
+
+    return {
+      message: SuccessMessagesHelper.TASK_STATUS_UPDATED,
     };
   }
 }

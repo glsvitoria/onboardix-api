@@ -119,8 +119,8 @@ export type TemplateScalarFieldEnum = (typeof TemplateScalarFieldEnum)[keyof typ
 export const TaskScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  content: 'content',
   order: 'order',
+  content: 'content',
   link: 'link',
   templateId: 'templateId',
   createdAt: 'createdAt',

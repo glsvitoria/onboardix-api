@@ -19,15 +19,15 @@ import { ProtectedRoles } from '@/common/decorators/protected-routes';
 export class EmployeesController {
   constructor(private employeesService: EmployeesService) {}
 
-  @Post(':id/assign/:templateId')
+  @Post(':userId/assign/:templateId')
   @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async assign(
-    @Param('id', new ValidationUUID()) employeeId: string,
+    @Param('userId', new ValidationUUID()) userId: string,
     @Param('templateId', new ValidationUUID()) templateId: string,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.employeesService.assignTemplate(
-      employeeId,
+      userId,
       templateId,
       user.orgId,
     );
@@ -36,7 +36,7 @@ export class EmployeesController {
   @Get('my-progress')
   @ProtectedRoles(UserRole.MEMBER)
   async getMyProgress(@CurrentUser() user: AuthenticatedUser) {
-    return this.employeesService.getEmployeeProgress(user.sub);
+    return this.employeesService.getEmployeeProgress(user.sub, user.orgId);
   }
 
   @Get()
@@ -55,15 +55,20 @@ export class EmployeesController {
     @Param('taskId', new ValidationUUID()) taskId: string,
     @Body('completed') completed: boolean,
   ) {
-    return this.employeesService.toggleTaskStatus(user.sub, taskId, completed);
+    return this.employeesService.toggleTaskStatus(
+      user.sub,
+      user.orgId,
+      taskId,
+      completed,
+    );
   }
 
-  @Get(':id/detail')
+  @Get(':userId/detail')
   @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
   async getDetail(
-    @Param('id', new ValidationUUID()) employeeId: string,
+    @Param('userId', new ValidationUUID()) userId: string,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.employeesService.getEmployeeDetail(employeeId, user.orgId);
+    return this.employeesService.getEmployeeDetail(user.orgId, userId);
   }
 }

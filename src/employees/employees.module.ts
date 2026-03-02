@@ -7,6 +7,8 @@ import { UsersRepository } from '@/users/repositories/users.repository';
 import { PrismaUsersRepository } from '@/users/repositories/prisma-users.repository';
 import { UserTasksRepository } from '@/user-task/repositories/user-tasks.repositories';
 import { PrismaUserTasksRepository } from '@/user-task/repositories/prisma-user-tasks.repository';
+import { TemplatesRepository } from '@/templates/repositories/template.repository';
+import { PrismaTemplatesRepository } from '@/templates/repositories/prisma-templates.repository';
 
 @Module({
   providers: [
@@ -14,6 +16,10 @@ import { PrismaUserTasksRepository } from '@/user-task/repositories/prisma-user-
     {
       provide: EmployeesRepository,
       useClass: PrismaEmployeesRepository,
+    },
+    {
+      provide: TemplatesRepository,
+      useClass: PrismaTemplatesRepository,
     },
     {
       provide: UsersRepository,

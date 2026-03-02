@@ -216,7 +216,6 @@ export type UserTaskOrderByWithRelationInput = {
 
 export type UserTaskWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId_taskId?: Prisma.UserTaskUserIdTaskIdCompoundUniqueInput
   AND?: Prisma.UserTaskWhereInput | Prisma.UserTaskWhereInput[]
   OR?: Prisma.UserTaskWhereInput[]
   NOT?: Prisma.UserTaskWhereInput | Prisma.UserTaskWhereInput[]
@@ -228,7 +227,7 @@ export type UserTaskWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"UserTask"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   task?: Prisma.XOR<Prisma.TaskScalarRelationFilter, Prisma.TaskWhereInput>
-}, "id" | "userId_taskId">
+}, "id">
 
 export type UserTaskOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -332,11 +331,6 @@ export type UserTaskListRelationFilter = {
 
 export type UserTaskOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type UserTaskUserIdTaskIdCompoundUniqueInput = {
-  userId: string
-  taskId: string
 }
 
 export type UserTaskCountOrderByAggregateInput = {

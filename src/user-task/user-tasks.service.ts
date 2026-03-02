@@ -10,8 +10,17 @@ export class UserTasksService {
     return this.userTasksRepository.findByUserId(userId);
   }
 
-  async toggleTask(userId: string, userTaskId: string, completed: boolean) {
-    const task = await this.userTasksRepository.findById(userTaskId, userId);
+  async toggleTask(
+    userId: string,
+    orgId: string,
+    userTaskId: string,
+    completed: boolean,
+  ) {
+    const task = await this.userTasksRepository.findById(
+      userTaskId,
+      userId,
+      orgId,
+    );
 
     if (!task)
       throw new NotFoundException(ErrorMessagesHelper.TASK_NOT_FOUND_TO_USER);
