@@ -21,6 +21,15 @@ export class EmployeesController {
     return this.employeesService.assignTemplate(userId, templateId, user.orgId);
   }
 
+  @Get(':userId/detail')
+  @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
+  async getDetail(
+    @Param('userId', new ValidationUUID()) userId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.employeesService.getEmployeeDetail(user.orgId, userId);
+  }
+
   @Get('my-progress')
   @ProtectedRoles(UserRole.MEMBER)
   async getMyProgress(@CurrentUser() user: AuthenticatedUser) {
@@ -36,12 +45,12 @@ export class EmployeesController {
     return this.employeesService.listEmployees(user.orgId, query);
   }
 
-  @Get(':userId/detail')
+  @Post(':userId/unassign')
   @ProtectedRoles(UserRole.ADMIN, UserRole.OWNER)
-  async getDetail(
+  async unassign(
     @Param('userId', new ValidationUUID()) userId: string,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.employeesService.getEmployeeDetail(user.orgId, userId);
+    return this.employeesService.unassignTemplate(userId,user.orgId);
   }
 }

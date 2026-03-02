@@ -5,6 +5,7 @@ export type UserTaskWithTasks = UserTask & {
 };
 
 export abstract class UserTasksRepository {
+  abstract deleteMany(ids: string[]): Promise<{ count: number }>;
   abstract findByUserId(
     userId: string,
     orgId?: string,
@@ -19,6 +20,10 @@ export abstract class UserTasksRepository {
     userId: string,
     organizationId: string,
   ): Promise<UserTask | null>;
+  abstract listByUserId(
+    userId: string,
+    organizationId: string,
+  ): Promise<UserTask[]>;
   abstract updateStatus(
     userTaskId: string,
     userId: string,

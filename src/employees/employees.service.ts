@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EmployeesRepository } from './repositories/employees.repository';
 import { MailService } from '@/mail/mail.service';
 import { UsersRepository } from '@/users/repositories/users.repository';
@@ -22,7 +26,22 @@ export class EmployeesService {
   ) {}
 
   async assignTemplate(userId: string, templateId: string, orgId: string) {
-    const template = await this.templatesRepository.findById(templateId, orgId);
+    const userTasksOnGoing = await this.userTasksRepository.listByUserId(
+      userId,
+      orgId,
+    );
+
+    if (userTasksOnGoing.length > 0) {
+      throw new ConflictException(
+        ErrorMessagesHelper.TASKS_ALREADY_ASSIGNED_TO_USER,
+      );
+    }
+
+    const template = await this.templatesRepository.findById(
+      templateId,
+      orgId,
+      userId,
+    );
 
     if (!template)
       throw new NotFoundException(ErrorMessagesHelper.TEMPLATE_NOT_FOUND);
@@ -85,7 +104,10 @@ export class EmployeesService {
   }
 
   async getEmployeeProgress(userId: string, orgId: string) {
-    const userTasks = await this.userTasksRepository.findByUserId(userId, orgId);
+    const userTasks = await this.userTasksRepository.findByUserId(
+      userId,
+      orgId,
+    );
 
     const total = userTasks.length;
     const completed = userTasks.filter((t) => t.completedAt !== null).length;
@@ -95,7 +117,9 @@ export class EmployeesService {
       percentage,
       total,
       completed,
-      userTasks: userTasks.map((userTask) => new UserTaskWithTasksEntity(userTask)),
+      userTasks: userTasks.map(
+        (userTask) => new UserTaskWithTasksEntity(userTask),
+      ),
     };
   }
 
@@ -134,6 +158,27 @@ export class EmployeesService {
     return {
       users: usersFormatted.map((user) => new UserWithProgressEntity(user)),
       total,
+    };
+  }
+
+  async unassignTemplate(userId: string, orgId: string) {
+    const userTasks = await this.userTasksRepository.listByUserId(
+      userId,
+      orgId,
+    );
+
+    if (userTasks.length === 0) {
+      throw new NotFoundException(
+        ErrorMessagesHelper.TASK_NOT_ASSIGNED_TO_USER,
+      );
+    }
+
+    await this.userTasksRepository.deleteMany(
+      userTasks.map((userTask) => userTask.id),
+    );
+
+    return {
+      message: SuccessMessagesHelper.TEMPLATE_UNASSIGNED,
     };
   }
 }

@@ -5,6 +5,7 @@ export const SuccessMessagesHelper = {
   ORGANIZATION_CREATED: 'Organização criada com sucesso!',
   TASK_STATUS_UPDATED: 'Status da tarefa atualizada com sucesso',
   TEMPLATE_ASSIGNED: 'Template atribuído ao colaborador com sucesso!',
+  TEMPLATE_UNASSIGNED: 'Template desatribuído ao colaborador com sucesso!',
   TEMPLATE_CREATED: 'Template criado com sucesso!',
   TEMPLATE_DELETED: 'Template excluído com sucesso!',
   TEMPLATE_UPDATE: 'Template atualizado com sucesso!',

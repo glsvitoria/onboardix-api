@@ -6,6 +6,16 @@ import { Injectable } from '@nestjs/common';
 export class PrismaUserTasksRepository implements UserTasksRepository {
   constructor(private prisma: PrismaService) {}
 
+  async deleteMany(ids: string[]) {
+    return await this.prisma.userTask.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
+
   async findByUserId(userId: string, organizationId: string) {
     return await this.prisma.userTask.findMany({
       where: {
@@ -38,6 +48,17 @@ export class PrismaUserTasksRepository implements UserTasksRepository {
       where: {
         userId,
         taskId,
+        user: {
+          organizationId,
+        },
+      },
+    });
+  }
+
+  async listByUserId(userId: string, organizationId: string) {
+    return await this.prisma.userTask.findMany({
+      where: {
+        userId,
         user: {
           organizationId,
         },

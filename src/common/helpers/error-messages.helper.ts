@@ -6,6 +6,7 @@ export const ErrorMessagesHelper = {
   ORGANIZATION_NOT_FOUND: 'Organização não encontrada',
   INVALID_CREDENTIALS: 'As credenciais informadas são inválidas',
   INVALID_INVITATION: 'Convite inválido',
+  TASKS_ALREADY_ASSIGNED_TO_USER: 'Existem tarefas já atribuída para esse colaborador',
   TASK_NOT_ASSIGNED_TO_USER: 'Tarefa não atribuída para esse colaborador',
   TASK_NOT_FOUND_TO_USER: ' Tarefa não encontrada para esse colaborador',
   TEMPLATE_NOT_FOUND: 'Template não encontrado',
