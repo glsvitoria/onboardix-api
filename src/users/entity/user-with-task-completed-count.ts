@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/mapped-types';
 import { UserEntity } from './user';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UserTaskOnlyCompletedAtEntity } from '@/user-task/entity/user-task-only-completed-at';
+import { UserTaskOnlyCompletedAtEntity } from '@/user-tasks/entity/user-task-only-completed-at';
 
 export class UserWithTaskCompletedCountEntity extends PickType(UserEntity, [
   'id',

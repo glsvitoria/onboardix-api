@@ -1,2 +1,2 @@
 - Poder criar, editar, lista e excluir Admin
-- Separar repositories / service / controllers só para afetar os employees
+- Separar repositories / service / controllers em que apenas mexa nos employees (Rotas que apenas eles acessam)

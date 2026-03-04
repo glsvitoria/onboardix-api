@@ -6,14 +6,14 @@ import {
 import { EmployeesRepository } from './repositories/employees.repository';
 import { MailService } from '@/mail/mail.service';
 import { UsersRepository } from '@/users/repositories/users.repository';
-import { UserTasksRepository } from '@/user-task/repositories/user-tasks.repositories';
+import { UserTasksRepository } from '@/user-tasks/repositories/user-tasks.repositories';
 import { FindAllPaginationDto } from './dto/find-all-pagination.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 import { TemplatesRepository } from '@/templates/repositories/template.repository';
 import { UserWithProgressEntity } from '@/users/entity/user-with-progress';
 import { UserOnboardingStatus } from '@/users/entity/user-progress';
-import { UserTaskWithTasksEntity } from '@/user-task/entity/user-task-with-tasks';
+import { UserTaskWithTasksEntity } from '@/user-tasks/entity/user-task-with-tasks';
 
 @Injectable()
 export class EmployeesService {
@@ -154,8 +154,6 @@ export class EmployeesService {
         },
       };
     });
-
-    console.log(usersFormatted.map((user) => new UserWithProgressEntity(user)))
 
     return {
       users: usersFormatted.map((user) => new UserWithProgressEntity(user)),

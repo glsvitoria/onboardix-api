@@ -35,7 +35,6 @@ export class InvitationsService {
     const invitation = await this.invitationsRepository.findByToken(
       acceptInvitationDto.token,
     );
-    console.log(invitation)
 
     if (!invitation)
       throw new BadRequestException(ErrorMessagesHelper.INVALID_INVITATION);

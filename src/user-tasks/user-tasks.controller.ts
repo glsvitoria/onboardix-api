@@ -8,7 +8,7 @@ import { UserRole } from '@/generated/prisma/enums';
 import { ProtectedRoles } from '@/common/decorators/protected-routes';
 import { UserTaskEntity } from './entity/user-task';
 
-@Controller('my-tasks')
+@Controller('user-tasks')
 @ProtectedRoles(UserRole.MEMBER)
 export class UserTasksController {
   constructor(private readonly userTasksService: UserTasksService) {}

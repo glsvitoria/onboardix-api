@@ -21,10 +21,11 @@ export class MailService {
     token: string,
   ) {
     const invitationUrl = `${'http://localhost:3000'}/auth/aceitar-convite?token=${token}`;
-    console.log(token);
+
+    const fromAddress = `Onboardix <${env.EMAIL_FROM}>`;
 
     const { data, error } = await this.resend.emails.send({
-      from: env.ACCESS_TOKEN_SECRET,
+      from: fromAddress,
       to: [email],
       subject: `Você foi convidado para a organização ${organizationName} no Onboardix!`,
       html: invitationTemplate({

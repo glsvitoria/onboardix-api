@@ -10,8 +10,8 @@ import { InvitationsRepository } from '@/invitations/repositories/invitations.re
 import { PrismaInvitationsRepository } from '@/invitations/repositories/prisma-invitations.repository';
 import { LeadsRepository } from '@/leads/repositories/leads.repository';
 import { PrismaLeadsRepository } from '@/leads/repositories/prisma-leads.repository';
-import { UserTasksRepository } from '@/user-task/repositories/user-tasks.repositories';
-import { PrismaUserTasksRepository } from '@/user-task/repositories/prisma-user-tasks.repository';
+import { UserTasksRepository } from '@/user-tasks/repositories/user-tasks.repositories';
+import { PrismaUserTasksRepository } from '@/user-tasks/repositories/prisma-user-tasks.repository';
 import { DashboardRepository } from '@/dashboard/repositories/dashboard.repository';
 import { PrismaDashboardRepository } from '@/dashboard/repositories/prisma-dashboard.repository';
 import { TemplatesRepository } from '@/templates/repositories/template.repository';
