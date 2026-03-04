@@ -5,27 +5,26 @@ import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { leadConfirmationTemplate } from './templates/lead-confirmation.template';
 import { welcomeOrganizationTemplate } from './templates/welcome-org.template';
 import { invitationTemplate } from './templates/invitation.template';
+import { env } from '@/config/env-validation';
 
 @Injectable()
 export class MailService {
   private resend: Resend;
 
   constructor() {
-    this.resend = new Resend(process.env.RESEND_API_KEY);
+    this.resend = new Resend(env.RESEND_API_KEY);
   }
 
   async sendInvitationEmployee(
     email: string,
     organizationName: string,
-    token: string, // Recebemos o token gerado na criação do convite
+    token: string,
   ) {
-    // Construímos a URL com o token para o convite
-    const invitationUrl = `${
-      process.env.FRONTEND_URL || 'http://localhost:3000'
-    }/auth/aceitar-convite?token=${token}`;
+    const invitationUrl = `${'http://localhost:3000'}/auth/aceitar-convite?token=${token}`;
+    console.log(token);
 
     const { data, error } = await this.resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Onboardix <onboarding@resend.dev>',
+      from: env.ACCESS_TOKEN_SECRET,
       to: [email],
       subject: `Você foi convidado para a organização ${organizationName} no Onboardix!`,
       html: invitationTemplate({

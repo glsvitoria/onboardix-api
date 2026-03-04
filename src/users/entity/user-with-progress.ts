@@ -17,7 +17,8 @@ export class UserWithProgressEntity extends PickType(UserEntity, [
   onboarding: UserProgressEntity;
 
   constructor(partial: Partial<UserWithProgressEntity>) {
-    super(partial);
+    super();
+    Object.assign(this, partial);
 
     if (partial.onboarding) {
       this.onboarding = new UserProgressEntity(partial.onboarding);

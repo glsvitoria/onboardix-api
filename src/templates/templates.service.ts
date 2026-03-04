@@ -114,6 +114,11 @@ export class TemplatesService {
       ...updateTemplateDto,
       tasks: updateTemplateDto.tasks
         ? {
+            deleteMany: {
+              id: {
+                notIn: tasksToUpdate.map((task) => task.id),
+              },
+            },
             update: tasksToUpdate.map((task) => ({
               where: {
                 id: task.id,

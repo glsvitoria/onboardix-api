@@ -14,7 +14,8 @@ export class UserWithTaskCompletedCountEntity extends PickType(UserEntity, [
   assignedTasks: UserTaskOnlyCompletedAtEntity[];
 
   constructor(partial: Partial<UserWithTaskCompletedCountEntity>) {
-    super(partial);
+    super();
+    Object.assign(this, partial);
 
     if (partial.assignedTasks) {
       this.assignedTasks = (partial.assignedTasks || []).map(

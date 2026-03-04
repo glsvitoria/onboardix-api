@@ -155,6 +155,8 @@ export class EmployeesService {
       };
     });
 
+    console.log(usersFormatted.map((user) => new UserWithProgressEntity(user)))
+
     return {
       users: usersFormatted.map((user) => new UserWithProgressEntity(user)),
       total,

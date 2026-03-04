@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, HttpStatus } from '@nestjs/common';
 import { InvitationsService } from './invitations.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '@/common/types/authenticated-user';
@@ -13,7 +13,6 @@ export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
 
   @Post('accept')
-  @ProtectedRoles(UserRole.MEMBER)
   async accept(@Body() acceptInvitationDto: AcceptInvitationDto) {
     return this.invitationsService.acceptInvitation(acceptInvitationDto);
   }
@@ -38,5 +37,10 @@ export class InvitationsController {
     @Query() findAllPaginationDto: FindAllPaginationDto,
   ) {
     return this.invitationsService.list(user.orgId, findAllPaginationDto);
+  }
+
+  @Get('validate')
+  async validate(@Query('token') token: string) {
+    return this.invitationsService.validate(token);
   }
 }

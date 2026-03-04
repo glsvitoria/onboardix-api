@@ -19,6 +19,7 @@ import { MailService } from '@/mail/mail.service';
 import { OrganizationsRepository } from '@/organizations/repositories/organizations.repository';
 import { SALT_ROUNDS } from '@/auth/strategies/access-token.strategy';
 import { InvitationEntity } from './entity/invitation';
+import { isAfter } from 'date-fns';
 
 @Injectable()
 export class InvitationsService {
@@ -34,6 +35,7 @@ export class InvitationsService {
     const invitation = await this.invitationsRepository.findByToken(
       acceptInvitationDto.token,
     );
+    console.log(invitation)
 
     if (!invitation)
       throw new BadRequestException(ErrorMessagesHelper.INVALID_INVITATION);
@@ -126,5 +128,17 @@ export class InvitationsService {
       ),
       total,
     };
+  }
+
+  async validate(token: string) {
+    const invitation = await this.invitationsRepository.findByToken(token);
+
+    if (!invitation)
+      throw new BadRequestException(ErrorMessagesHelper.INVALID_INVITATION);
+
+    if (isAfter(new Date(), invitation.expiresAt))
+      throw new GoneException(ErrorMessagesHelper.EXPIRED_INVITATION);
+
+    return invitation;
   }
 }

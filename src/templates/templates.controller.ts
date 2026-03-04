@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Put,
 } from '@nestjs/common';
 import { TemplatesService } from './templates.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
@@ -52,7 +53,7 @@ export class TemplatesController {
     return this.templatesService.findOne(templateId, user.orgId);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ProtectedRoles(UserRole.OWNER, UserRole.ADMIN)
   async update(
     @Body() updateTemplateDto: UpdateTemplateDto,
