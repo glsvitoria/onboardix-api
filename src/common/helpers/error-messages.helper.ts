@@ -15,4 +15,5 @@ export const ErrorMessagesHelper = {
   TEMPLATE_NOT_FOUND: 'Template não encontrado',
   USER_NOT_FOUND: 'Colaborador não encontrado',
   USER_WITH_SAME_EMAIL_CREATED: 'Colaborador com esse e-mail já cadastrado',
+  USER_PASSWORD_INCORRECT: 'A senha atual está incorreta',
 };

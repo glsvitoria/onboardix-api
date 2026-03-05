@@ -20,12 +20,10 @@ export class MailService {
     organizationName: string,
     token: string,
   ) {
-    const invitationUrl = `${'http://localhost:3000'}/auth/aceitar-convite?token=${token}`;
-
-    const fromAddress = `Onboardix <${env.EMAIL_FROM}>`;
+    const invitationUrl = `${env.SITE_URL}/auth/aceitar-convite?token=${token}`;
 
     const { data, error } = await this.resend.emails.send({
-      from: fromAddress,
+      from: env.EMAIL_FROM,
       to: [email],
       subject: `Você foi convidado para a organização ${organizationName} no Onboardix!`,
       html: invitationTemplate({
@@ -44,7 +42,7 @@ export class MailService {
 
   async sendLeadConfirmation(email: string) {
     const { data, error } = await this.resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Onboardix <onboarding@resend.dev>',
+      from: env.EMAIL_FROM,
       to: [email],
       subject: '🚀 Recebemos seu pedido de acesso Beta!',
       html: leadConfirmationTemplate(),
@@ -63,11 +61,10 @@ export class MailService {
     name: string,
     templateName: string,
   ) {
-    const dashboardUrl =
-      process.env.FRONTEND_URL || 'https://onboardix.com/dashboard';
+    const dashboardUrl = `${env.SITE_URL}/dashboard`;
 
     const { data, error } = await this.resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Onboardix <onboarding@resend.dev>',
+      from: env.EMAIL_FROM,
       to: [email],
       subject: '🚀 Seu onboarding começou!',
       html: onboardingAssignmentTemplate({

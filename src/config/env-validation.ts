@@ -44,6 +44,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   EMAIL_FROM: string;
+ 
+  @IsString()
+  @IsNotEmpty()
+  SITE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

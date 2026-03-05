@@ -10,6 +10,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrorMessagesHelper } from '@/common/helpers/error-messages.helper';
 import { SALT_ROUNDS } from '@/auth/strategies/access-token.strategy';
+import { SuccessMessagesHelper } from '@/common/helpers/success-messages.helper';
 
 @Injectable()
 export class UsersService {
@@ -26,10 +27,14 @@ export class UsersService {
   async updateProfile(userId: string, orgId: string, dto: UpdateProfileDto) {
     await this.findOne(userId, orgId);
 
-    return this.usersRepository.update(userId, {
+    await this.usersRepository.update(userId, {
       fullName: dto.fullName,
       email: dto.email,
     });
+
+    return {
+      message: SuccessMessagesHelper.USER_PROFILE_UPDATED,
+    };
   }
 
   async updatePassword(userId: string, orgId: string, dto: UpdatePasswordDto) {
@@ -41,7 +46,9 @@ export class UsersService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('A senha atual está incorreta');
+      throw new UnauthorizedException(
+        ErrorMessagesHelper.USER_PASSWORD_INCORRECT,
+      );
     }
 
     const hashedPassword = await hash(dto.newPassword, SALT_ROUNDS);
@@ -50,6 +57,6 @@ export class UsersService {
       password_hash: hashedPassword,
     });
 
-    return { message: 'Senha atualizada com sucesso' };
+    return { message: SuccessMessagesHelper.USER_PASSWORD_UPDATED };
   }
 }

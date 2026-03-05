@@ -14,6 +14,7 @@ import { env } from '@/config/env-validation';
 import { RefreshTokensRepository } from '@/refresh-token/repositories/refresh-token';
 import { SALT_ROUNDS } from './strategies/refresh-token.strategy';
 import { User } from '@/generated/prisma/client';
+import { UserEntity } from '@/users/entity/user';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,12 @@ export class AuthService {
       throw new UnauthorizedException(ErrorMessagesHelper.INVALID_CREDENTIALS);
     }
 
-    return await this.generateToken(user);
+    const tokens = await this.generateToken(user);
+
+    return {
+      ...tokens,
+      user: new UserEntity(user),
+    };
   }
 
   async profile(userId: string, orgId: string) {
