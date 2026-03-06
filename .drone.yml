@@ -1,0 +1,54 @@
+kind: pipeline
+type: docker
+name: deploy-memiore-api
+
+steps:
+  - name: build-and-push
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: icarocedraz/memiore-api
+      tags: latest
+      cache_from: icarocedraz/memiore-api:latest
+      cache_to: icarocedraz/memiore-api:latest,mode=max
+
+  - name: deploy-to-server
+    image: docker:23
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: project-files
+        path: /app
+    commands:
+      - apk add --no-cache docker-cli-compose
+      - cd /app
+      - docker compose -p memiore --env-file .env pull
+      - docker compose -p memiore --env-file .env down --remove-orphans || true
+      - docker compose -p memiore --env-file .env up -d --force-recreate --remove-orphans
+
+  - name: notificar-falha-discord
+    image: appleboy/drone-discord
+    settings:
+      webhook_url:
+        from_secret: discord_webhook
+      message: '🚨 Falha no pipeline do repositório **${DRONE_REPO}** na branch **${DRONE_BRANCH}**.'
+    when:
+      status:
+        - failure
+
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+  - name: project-files
+    host:
+      path: /home/cedraz-ubuntu-2/Documentos/deploys/memiore
+
+trigger:
+  branch:
+    - main
+  event:
+    - push
