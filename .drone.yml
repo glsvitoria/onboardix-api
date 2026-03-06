@@ -19,7 +19,7 @@ steps:
     image: docker:23
     volumes:
       - name: dockersock
-        path: /run/docker-glsvitoria/docker.sock
+        path: /var/run/docker.sock
       - name: project-files
         path: /app
     commands:
@@ -34,7 +34,7 @@ steps:
     settings:
       webhook_url:
         from_secret: discord_webhook
-      message: '🚨 Falha no pipeline do repositório **${DRONE_REPO}** na branch **${DRONE_BRANCH}**.'
+      message: ' Falha no pipeline do repositório ${DRONE_REPO} na branch ${DRONE_BRANCH}.'
     when:
       status:
         - failure
@@ -42,10 +42,10 @@ steps:
 volumes:
   - name: dockersock
     host:
-      path: /var/run/docker.sock
+      path: /run/docker-glsvitoria/docker.sock
   - name: project-files
     host:
-      path: /home/glsvitoria/app/onboardix
+      path: /home/glsvitoria/apps/onboardix
 
 trigger:
   branch:
