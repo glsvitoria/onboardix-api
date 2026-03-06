@@ -25,9 +25,9 @@ steps:
     commands:
       - apk add --no-cache docker-cli-compose
       - cd /app
-      - docker compose -p memiore --env-file .env pull
-      - docker compose -p memiore --env-file .env down --remove-orphans || true
-      - docker compose -p memiore --env-file .env up -d --force-recreate --remove-orphans
+      - docker compose -p onboardix --env-file .env pull
+      - docker compose -p onboardix --env-file .env down --remove-orphans || true
+      - docker compose -p onboardix --env-file .env up -d --force-recreate --remove-orphans
 
   - name: notificar-falha-discord
     image: appleboy/drone-discord
@@ -45,7 +45,7 @@ volumes:
       path: /var/run/docker.sock
   - name: project-files
     host:
-      path: /home/cedraz-ubuntu-2/Documentos/deploys/memiore
+      path: /home/cedraz-ubuntu-2/Documentos/deploys/onboardix
 
 trigger:
   branch:
