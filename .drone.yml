@@ -45,7 +45,7 @@ volumes:
       path: /var/run/docker.sock
   - name: project-files
     host:
-      path: /home/cedraz-ubuntu-2/Documentos/deploys/onboardix
+      path: /home/glsvitoria/app/onboardix
 
 trigger:
   branch:
