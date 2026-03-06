@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: deploy-memiore-api
+name: deploy-onboardix
 
 steps:
   - name: build-and-push
@@ -10,10 +10,10 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      repo: icarocedraz/memiore-api
-      tags: latest
-      cache_from: icarocedraz/memiore-api:latest
-      cache_to: icarocedraz/memiore-api:latest,mode=max
+      repo: glsvitoria/onboardix
+      tags: 1.0
+      cache_from: glsvitoria/onboardix:1.0
+      cache_to: glsvitoria/onboardix:1.0,mode=max
 
   - name: deploy-to-server
     image: docker:23
