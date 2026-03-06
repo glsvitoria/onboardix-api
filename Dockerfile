@@ -26,6 +26,7 @@ ENV NODE_ENV=production
 
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma/
+COPY prisma.config.ts .
 
 RUN pnpm install --prod --frozen-lockfile
 
