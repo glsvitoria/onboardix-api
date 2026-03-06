@@ -19,7 +19,7 @@ steps:
     image: docker:23
     volumes:
       - name: dockersock
-        path: /var/run/docker.sock
+        path: /run/docker-glsvitoria/docker.sock
       - name: project-files
         path: /app
     commands:
