@@ -81,7 +81,7 @@ export class AuthService {
     if (!refreshTokenSaved)
       throw new NotFoundException(ErrorMessagesHelper.REFRESH_TOKEN_NOT_FOUND);
 
-    const isValid = await compare(refreshTokenSaved.hashedToken, refreshToken);
+    const isValid = await compare(refreshToken, refreshTokenSaved.hashedToken);
 
     if (!isValid)
       throw new UnauthorizedException(
@@ -123,6 +123,8 @@ export class AuthService {
     const accessTokenExpiresAt = new Date(now.getTime() + 15 * 60000); // +15 min
     const refreshTokenExpiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60000); // +7 dias
 
+    await this.refreshTokensRepository.deleteByUserId(user.id);
+
     await this.refreshTokensRepository.create({
       expiresAt: refreshTokenExpiresAt,
       hashedToken: await hash(refreshToken, SALT_ROUNDS),
@@ -138,6 +140,21 @@ export class AuthService {
       accessTokenExpiresAt,
       refreshToken,
       refreshTokenExpiresAt,
+    };
+  }
+
+  async validate(userId: string, orgId: string) {
+    const user = await this.usersRepository.findById(userId, orgId);
+
+    if (!user) {
+      throw new NotFoundException(ErrorMessagesHelper.USER_NOT_FOUND);
+    }
+
+    const tokens = await this.generateToken(user);
+
+    return {
+      ...tokens,
+      user: new UserEntity(user),
     };
   }
 }

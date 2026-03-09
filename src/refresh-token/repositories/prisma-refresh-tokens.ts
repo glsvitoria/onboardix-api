@@ -22,6 +22,14 @@ export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
     });
   }
 
+  async deleteByUserId(userId: string) {
+    return await this.prismaService.refreshToken.deleteMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async findByUserId(userId: string) {
     return await this.prismaService.refreshToken.findFirst({
       where: {

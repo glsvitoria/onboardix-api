@@ -31,9 +31,15 @@ export class AuthController {
     return this.authService.profile(user.sub, user.orgId);
   }
 
-  @Post()
+  @Post('/refresh')
   @RefreshTokenProtected()
   async refreshToken(@CurrentRefreshToken() user: RefreshTokenUser) {
     return this.authService.refresh(user.sub, user.refreshToken);
+  }
+
+  @Post('/validate')
+  @ProtectedRoles()
+  async validateSession(@CurrentUser() user: AuthenticatedUser) {
+    return this.authService.validate(user.sub, user.orgId);
   }
 }
