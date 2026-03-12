@@ -77,6 +77,7 @@ export class PrismaDashboardRepository implements DashboardRepository {
     const users = await this.prisma.user.findMany({
       where: {
         organizationId: orgId,
+        role: 'MEMBER',
       },
       select: {
         assignedTasks: true,

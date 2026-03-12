@@ -1,2 +1,3 @@
 - Poder criar, editar, lista e excluir Admin
 - Separar repositories / service / controllers em que apenas mexa nos employees (Rotas que apenas eles acessam)
+- Implementar fluxo de esqueci a senha (mandar e-mail, validar código e alterar senha)

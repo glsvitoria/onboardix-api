@@ -68,14 +68,6 @@ export class DashboardService {
       cards: {
         totalEmployees: stats.totalEmployees,
         avgProgress: `${avgProgress}%`,
-        completionRate:
-          stats.completedTasks + stats.pendingTasks > 0
-            ? Math.round(
-                (stats.completedTasks /
-                  (stats.completedTasks + stats.pendingTasks)) *
-                  100,
-              )
-            : 0,
       },
       charts: {
         taskDistribution: [
