@@ -391,7 +391,8 @@ export const ModelName = {
   UserTask: 'UserTask',
   Invitation: 'Invitation',
   Lead: 'Lead',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  VerificationRequest: 'VerificationRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "organization" | "user" | "template" | "task" | "userTask" | "invitation" | "lead" | "refreshToken"
+    modelProps: "organization" | "user" | "template" | "task" | "userTask" | "invitation" | "lead" | "refreshToken" | "verificationRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1003,6 +1004,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    VerificationRequest: {
+      payload: Prisma.$VerificationRequestPayload<ExtArgs>
+      fields: Prisma.VerificationRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VerificationRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VerificationRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.VerificationRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VerificationRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        findMany: {
+          args: Prisma.VerificationRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>[]
+        }
+        create: {
+          args: Prisma.VerificationRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        createMany: {
+          args: Prisma.VerificationRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.VerificationRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.VerificationRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        update: {
+          args: Prisma.VerificationRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.VerificationRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VerificationRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.VerificationRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.VerificationRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.VerificationRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVerificationRequest>
+        }
+        groupBy: {
+          args: Prisma.VerificationRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VerificationRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationRequestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1149,12 +1224,37 @@ export const RefreshTokenScalarFieldEnum = {
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
+export const VerificationRequestScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  hashedCode: 'hashedCode',
+  expiresAt: 'expiresAt',
+  type: 'type',
+  metadata: 'metadata',
+  attempts: 'attempts',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  validatedAt: 'validatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type VerificationRequestScalarFieldEnum = (typeof VerificationRequestScalarFieldEnum)[keyof typeof VerificationRequestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1171,6 +1271,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1239,6 +1348,34 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'VerificationType'
+ */
+export type EnumVerificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationType'>
+    
+
+
+/**
+ * Reference to a field of type 'VerificationType[]'
+ */
+export type ListEnumVerificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -1358,6 +1495,7 @@ export type GlobalOmitConfig = {
   invitation?: Prisma.InvitationOmit
   lead?: Prisma.LeadOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  verificationRequest?: Prisma.VerificationRequestOmit
 }
 
 /* Types for Logging */

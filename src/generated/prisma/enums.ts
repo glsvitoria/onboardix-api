@@ -26,3 +26,10 @@ export const TaskType = {
 } as const
 
 export type TaskType = (typeof TaskType)[keyof typeof TaskType]
+
+
+export const VerificationType = {
+  PASSWORD_RESET: 'PASSWORD_RESET'
+} as const
+
+export type VerificationType = (typeof VerificationType)[keyof typeof VerificationType]

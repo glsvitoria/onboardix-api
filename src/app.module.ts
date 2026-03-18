@@ -9,6 +9,7 @@ import { UserTasksModule } from './user-tasks/users-tasks.module';
 import { DatabaseModule } from './database/database.module';
 import { MailModule } from './mail/mail.module';
 import { LeadsModule } from './leads/leads.module';
+import { VerificationRequestModule } from './verification-request/verification-request.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LeadsModule } from './leads/leads.module';
     UserTasksModule,
     MailModule,
     LeadsModule,
+    VerificationRequestModule,
   ],
   controllers: [],
   providers: [],

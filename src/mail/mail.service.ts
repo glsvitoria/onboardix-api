@@ -6,6 +6,7 @@ import { leadConfirmationTemplate } from './templates/lead-confirmation.template
 import { welcomeOrganizationTemplate } from './templates/welcome-org.template';
 import { invitationTemplate } from './templates/invitation.template';
 import { env } from '@/config/env-validation';
+import { passwordRecoveryTemplate } from './templates/password-recovery.template';
 
 @Injectable()
 export class MailService {
@@ -76,6 +77,28 @@ export class MailService {
 
     if (error) {
       console.error('[MailService]', error);
+      throw new InternalServerErrorException(
+        ErrorMessagesHelper.FAILED_TO_SEND_EMAIL,
+      );
+    }
+
+    return data;
+  }
+
+  async sendPasswordRecovery(email: string, code: string, userName?: string) {
+    const { data, error } = await this.resend.emails.send({
+      from: env.EMAIL_FROM,
+      to: [email],
+      subject: 'Recuperação de Senha - Onboardix',
+      html: passwordRecoveryTemplate({
+        code,
+        userName,
+        expiresInMinutes: 15,
+      }),
+    });
+
+    if (error) {
+      console.error('[MailService Password Recovery Error]', error);
       throw new InternalServerErrorException(
         ErrorMessagesHelper.FAILED_TO_SEND_EMAIL,
       );

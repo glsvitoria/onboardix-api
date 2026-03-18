@@ -16,4 +16,8 @@ export const ErrorMessagesHelper = {
   USER_NOT_FOUND: 'Colaborador não encontrado',
   USER_WITH_SAME_EMAIL_CREATED: 'Colaborador com esse e-mail já cadastrado',
   USER_PASSWORD_INCORRECT: 'A senha atual está incorreta',
+  VERIFICATION_REQUEST_NOT_FOUND: 'Solicitação de verificação não encontrada',
+  VERIFICATION_REQUEST_ATTEMPTS_EXCEEDED: 'Limite de tentativas excedido. Solicite um novo código.',
+  VERIFICATION_REQUEST_EXPIRED: 'Código de verificação expirado. Solicite um novo código.',
+  VERIFICATION_REQUEST_CODE_INVALID: 'Código de verificação inválido.',
 };

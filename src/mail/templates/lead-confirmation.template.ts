@@ -1,5 +1,3 @@
-
-
 export const leadConfirmationTemplate = (): string => {
   const primaryColor = '#0070f3';
   const year = new Date().getFullYear();

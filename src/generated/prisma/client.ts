@@ -77,3 +77,8 @@ export type Lead = Prisma.LeadModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model VerificationRequest
+ * 
+ */
+export type VerificationRequest = Prisma.VerificationRequestModel
