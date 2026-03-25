@@ -18,6 +18,8 @@ import { TemplatesRepository } from '@/templates/repositories/template.repositor
 import { PrismaTemplatesRepository } from '@/templates/repositories/prisma-templates.repository';
 import { EmployeesRepository } from '@/employees/repositories/employees.repository';
 import { PrismaEmployeesRepository } from '@/employees/repositories/prisma-employees.repository';
+import { VerificationRequestsRepository } from '@/verification-request/repositories/verification-request.repository';
+import { PrismaVerificationRequestsRepository } from '@/verification-request/repositories/prisma-verification-request.repository';
 
 @Global()
 @Module({
@@ -59,6 +61,10 @@ import { PrismaEmployeesRepository } from '@/employees/repositories/prisma-emplo
       provide: UserTasksRepository,
       useClass: PrismaUserTasksRepository,
     },
+    {
+      provide: VerificationRequestsRepository,
+      useClass: PrismaVerificationRequestsRepository,
+    },
   ],
   exports: [
     DashboardRepository,
@@ -71,6 +77,7 @@ import { PrismaEmployeesRepository } from '@/employees/repositories/prisma-emplo
     TemplatesRepository,
     UsersRepository,
     UserTasksRepository,
+    VerificationRequestsRepository,
   ],
 })
 export class DatabaseModule {}
